@@ -1,0 +1,77 @@
+/* Hero background */
+.hero-section {
+    background: linear-gradient(to right, #E9762B, #f79d4d);
+}
+
+/* Get Started button */
+.hero-button {
+    background-color: white;
+    color: #E9762B;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.hero-button:hover {
+    background: linear-gradient(to right, #E9762B, #f79d4d);
+    color: white;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+/* Carousel wrapper */
+.carousel-flex-wrapper {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    padding: 3rem 0;
+}
+
+/* Carousel items track */
+.carousel-items {
+    display: inline-flex;
+    gap: 2rem;
+    animation: scroll 30s linear infinite;
+}
+
+/* Keyframe animation */
+@keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* Individual card */
+.carousel-card {
+    background-color: white;
+    border-radius: 20px;
+    min-width: 360px;
+    max-width: 400px;
+    flex-shrink: 0;
+    text-align: center;
+    color: #333;
+    text-decoration: none;
+    transition: transform 0.4s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Hover zoom effect */
+.carousel-card:hover {
+    transform: scale(1.12);
+    z-index: 10;
+}
+
+/* Image inside card */
+.carousel-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+/* Card content */
+.carousel-info {
+    padding: 1rem;
+}

@@ -1,5 +1,6 @@
 import './App.css'
 import Header from './components/header/Header'
+import Hero from './components/hero/Hero'
 
 function App({
     user
@@ -12,11 +13,7 @@ function App({
                 <Header />
                 <main className="flex-1">
                     {/* Hero Section */}
-                    <section className="bg-[#E9762B] py-20 text-center text-white">
-                        <h2 className="text-4xl font-semibold mb-4">Welcome to BiteReview!</h2>
-                        <p className="text-lg mb-6">Your go-to platform for honest and reliable restaurant reviews.</p>
-                        <button className="bg-gray-800 text-white px-6 py-3 rounded-full hover:bg-[#41644A] transition-colors">Get Started</button>
-                    </section>
+                    <Hero />
 
                     {/* Features Section */}
                     <section id="features" className="py-16 bg-white">
