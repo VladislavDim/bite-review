@@ -1,35 +1,33 @@
+import './Header.css';
+import logo from '../../assets/images/Logo.png';
+import { Link, useLocation } from 'react-router';
 
-export default function Header({
-    user
-}) {
+export default function Header({ user }) {
+    const location = useLocation();
+    const isActive = (path) => location.pathname === path;
 
     return (
+        <header className="header-gradient py-6 text-white shadow-md">
+            <div className="container mx-auto px-4 flex flex-col md:flex-row md:items-center justify-between">
+                {/* Logo + Title */}
+                <div className="flex items-center space-x-4 mb-4 md:mb-0">
+                    <img src={logo} alt="BiteReview Logo" className="w-10 h-10" />
+                    <h1 className="text-2xl md:text-3xl font-bold text-white">BiteReview</h1>
+                </div>
 
-        <header className="bg-white shadow-md py-4">
-            <div className="container mx-auto flex items-center flex-wrap-nowrap">
-                <img src="/images/Logo.png" alt="BiteReview Logo" className="w-10 h-10 mr-2" />
-                <h1 className="text-3xl font-bold text-gray-800">BiteReview</h1>
-                <nav className="ml-auto">
-                    <ul className="flex space-x-8 text-lg font-semibold text-gray-600">
-                        <li>
-                            <a href="#home" className="hover:text-[#E9762B] transition-colors">Home</a>
-                        </li>
-                        <li>
-                            <a href="#restaurants" className="hover:text-[#E9762B] transition-colors">Restaurants</a>
-                        </li>
-                        <li>
-                            <a href="#profile" className="hover:text-[#E9762B] transition-colors">My Profile</a>
-                        </li>
-                        <li>
-                            <a href="#login" className="hover:text-[#E9762B] transition-colors">Login</a>
-                        </li>
-                        <li>
-                            <a href="#register" className="hover:text-[#E9762B] transition-colors">Register</a>
-                        </li>
-                        {user && (
-                            <li>
-                                <span className="text-gray-800 font-semibold">Welcome, {user.name}</span>
-                            </li>
+                {/* Navigation - always visible */}
+                <nav>
+                    <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-lg font-semibold text-white">
+                        <li><Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>Home</Link></li>
+                        <li><Link to="/restaurants" className={`nav-link ${isActive('/restaurants') ? 'active' : ''}`}>Restaurants</Link></li>
+                        <li><Link to="/profile" className={`nav-link ${isActive('/profile') ? 'active' : ''}`}>My Profile</Link></li>
+                        {!user ? (
+                            <>
+                                <li><Link to="/login" className={`nav-link ${isActive('/login') ? 'active' : ''}`}>Login</Link></li>
+                                <li><Link to="/register" className={`nav-link ${isActive('/register') ? 'active' : ''}`}>Register</Link></li>
+                            </>
+                        ) : (
+                            <li><span className="text-white font-semibold">Welcome, {user.name}</span></li>
                         )}
                     </ul>
                 </nav>
