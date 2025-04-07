@@ -1,26 +1,29 @@
-import './App.css'
-import Features from './components/features/Features'
+import { Routes, Route } from 'react-router'
+
 import Footer from './components/footer/Footer'
 import Header from './components/header/Header'
-import Hero from './components/hero/Hero'
+import Home from './pages/Home'
+import Login from './pages/Login'
 
-function App({
-    user
-}) {
+import './App.css'
+
+function App() {
 
     return (
         <>
-            <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f8f8f8' }}>
+            <div className="min-h-screen flex flex-col" >
 
                 <Header />
 
                 <main className="flex-1">
 
-                    <Hero />
-                    <Features />
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/login' element={<Login/>}/>
+                    </Routes>
 
                 </main>
-                
+
                 <Footer />
 
             </div>
