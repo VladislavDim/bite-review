@@ -1,5 +1,6 @@
 import './App.css'
 import Features from './components/features/Features'
+import Footer from './components/footer/Footer'
 import Header from './components/header/Header'
 import Hero from './components/hero/Hero'
 
@@ -19,12 +20,9 @@ function App({
                     <Features />
 
                 </main>
-                {/* Footer */}
-                <footer className="bg-gray-800 text-white py-6">
-                    <div className="container mx-auto text-center">
-                        <p>&copy; 2025 BiteReview. All rights reserved.</p>
-                    </div>
-                </footer>
+                
+                <Footer />
+
             </div>
         </>
     )
