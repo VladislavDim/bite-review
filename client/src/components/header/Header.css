@@ -41,3 +41,25 @@
 .nav-link.active::after {
     width: 100%;
 }
+
+/* === Logo + Title wrapper === */
+.logo-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+  
+  .logo-brand-wrapper:hover {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  }
+  
+  .logo-brand-wrapper img {
+    transition: transform 0.4s ease;
+  }
+  
+  .logo-brand-wrapper:hover img {
+    transform: scale(1.2);
+  }
