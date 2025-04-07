@@ -1,5 +1,5 @@
 import './Header.css';
-import logo from '../../assets/images/Logo.png';
+import logo from '../../assets/images/LogoSite.png';
 import { Link, useLocation } from 'react-router';
 
 export default function Header({ user }) {
