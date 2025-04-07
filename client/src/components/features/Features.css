@@ -1,0 +1,101 @@
+/* === Features Section Container === */
+.features-section {
+    background-color: #fff;
+    padding: 4rem 1rem;
+    text-align: center;
+  }
+  
+  /* === Section Title with Underline === */
+  .features-section h3 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 3rem;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+  }
+  
+  .features-section h3::after {
+    content: "";
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(to right, #E9762B, #f79d4d);
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
+  
+  /* === Feature Cards Grid === */
+  .features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* === Feature Card Styling === */
+  .feature-card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 360px;
+    color: #333;
+    cursor: pointer;
+    border: 1px solid rgba(233, 118, 43, 0.12); /* soft border */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.03); /* subtle shadow */
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease, color 0.3s ease, border 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* === Title inside card === */
+  .feature-card h4 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #41644A;
+    transition: color 0.3s ease;
+  }
+  
+  /* === Paragraph text inside card === */
+  .feature-card p {
+    color: #555;
+    line-height: 1.6;
+    text-align: center;
+    transition: color 0.3s ease;
+  }
+  
+  /* === Hover Effect === */
+  .feature-card:hover {
+    background: linear-gradient(to right, #E9762B, #f79d4d);
+    transform: translateY(-8px) scale(1.05); /* slightly stronger */
+    box-shadow: 0 16px 36px rgba(233, 118, 43, 0.2); /* warmer, more visible */
+    border-color: #fff;
+    color: white;
+    z-index: 2;
+  }
+  
+  .feature-card:hover h4,
+  .feature-card:hover p {
+    color: white;
+  }
+  
+  /* === Optional Icon Support === */
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #E9762B;
+    transition: color 0.3s ease;
+  }
+  
+  .feature-card:hover .feature-icon {
+    color: white;
+  }
+  
