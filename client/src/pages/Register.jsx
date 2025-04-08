@@ -64,13 +64,9 @@ export default function Register() {
 
                     {/* Footer */}
                     <div className="mt-6">
-                            className="w-full bg-white text-[#E9762B] font-semibold py-2 rounded-lg 
-                                       border-2 border-[#E9762B] transition-all duration-300
-                                       hover:bg-gradient-to-r hover:from-[#E9762B] hover:to-[#f79d4d]
-                                       hover:text-white hover:border-white"
-                        >
-                            Register
-                        </button>
+
+                        <SubmitButton>Register</SubmitButton>
+                        
                         <p className="text-sm text-center text-gray-600 mt-4">
                             Already have an account?{' '}
                             <Link to="/login" className="text-orange-500 hover:underline font-medium">

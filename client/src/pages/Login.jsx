@@ -47,14 +47,9 @@ export default function Login() {
 
                     {/* Footer - долу */}
                     <div className="mt-6">
-                            type="submit"
-                            className="w-full bg-white text-[#E9762B] font-semibold py-2 rounded-lg 
-                                       border-2 border-[#E9762B] transition-all duration-300
-                                       hover:bg-gradient-to-r hover:from-[#E9762B] hover:to-[#f79d4d]
-                                       hover:text-white hover:border-white"
-                        >
-                            Sign In
-                        </button>
+
+                        <SubmitButton>Sign In</SubmitButton>
+                        
                         <p className="text-sm text-center text-gray-600 mt-4">
                             Don't have an account?{' '}
                             <Link to="/register" className="text-orange-500 hover:underline font-medium">
