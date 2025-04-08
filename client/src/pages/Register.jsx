@@ -64,7 +64,6 @@ export default function Register() {
 
                     {/* Footer */}
                     <div className="mt-6">
-                        <button
                             type="submit"
                             className="w-full bg-white text-[#E9762B] font-semibold py-2 rounded-lg 
                                        border-2 border-[#E9762B] transition-all duration-300
