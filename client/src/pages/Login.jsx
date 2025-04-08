@@ -15,7 +15,7 @@ export default function Login() {
                     <img
                         src={LoginImage}
                         alt="Login visual"
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover object-right"
                     />
                 </div>
 
@@ -61,7 +61,7 @@ export default function Login() {
                                                text-gray-500 hover:text-[#E9762B] 
                                                cursor-pointer transition-transform duration-200 hover:scale-125"
                                 >
-                                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                                    {showPassword ? <FiEye /> : <FiEyeOff />}
                                 </span>
                             </div>
                         </div>
