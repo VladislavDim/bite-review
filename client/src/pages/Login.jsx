@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Link } from "react-router";
-import { FiEye, FiEyeOff } from 'react-icons/fi';
 import LoginImage from '../assets/images/Login.png';
+import PasswordInput from "../components/ui/PasswordInput";
+import TextInput from "../components/ui/TextInput";
+import SubmitButton from "../components/ui/SubmitButton";
 
 export default function Login() {
-    const [showPassword, setShowPassword] = useState(false);
 
     return (
         <section className="flex items-center justify-center min-h-screen bg-[#f8f8f8] px-4">
@@ -23,29 +23,16 @@ export default function Login() {
                 <div
                     className="w-[340px] bg-white p-10 min-h-[540px] flex flex-col justify-between"
                 >
-                    {/* Header - горе */}
+                    {/* Header */}
                     <h2 className="text-2xl font-bold text-center text-[#E9762B]">Login to BiteReview</h2>
 
-                    {/* Form - средната част */}
+                    {/* Form */}
                     <form className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6">
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="you@example.com"
-                                required
-                                className="w-full bg-transparent border-b-2 border-[#E9762B] 
-                                           text-gray-800 placeholder-gray-400 
-                                           focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-[#E9762B]
-                                           transition-all duration-300"
-                            />
-                        </div>
-
+                        <TextInput id="email" type="email" label="Email" placeholder="you@example.com" />
                         <PasswordInput id="password" label="Password" />
                     </form>
 
-                    {/* Footer - долу */}
+                    {/* Footer */}
                     <div className="mt-6">
 
                         <SubmitButton>Sign In</SubmitButton>
