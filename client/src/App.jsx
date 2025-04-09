@@ -1,12 +1,15 @@
 import { Routes, Route } from 'react-router'
 
+import './App.css'
+
 import Footer from './components/footer/Footer'
 import Header from './components/header/Header'
 import Home from './pages/Home'
 import Login from './pages/Login'
-
-import './App.css'
 import Register from './pages/Register'
+import Restaurants from './pages/Restaurants'
+import RestaurantDetails from './pages/RestaurantDetails'
+
 
 function App() {
 
@@ -22,6 +25,8 @@ function App() {
                         <Route path='/' element={<Home />} />
                         <Route path='/register' element={<Register />} />
                         <Route path='/login' element={<Login />} />
+                        <Route path='/restaurants' element={<Restaurants />} />
+                        <Route path='/restaurants/:id' element={<RestaurantDetails />} />
                     </Routes>
 
                 </main>
