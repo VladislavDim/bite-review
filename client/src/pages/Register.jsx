@@ -1,10 +1,36 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useState } from "react";
 import RegisterImage from "../assets/images/Register.png";
 import PasswordInput from "../components/ui/PasswordInput";
 import TextInput from "../components/ui/TextInput";
 import SubmitButton from "../components/ui/SubmitButton";
+import { useActionState } from "react";
+import { useRegister } from "../api/authApi";
+import { useUserContext } from "../contexts/UserContext";
 
 export default function Register() {
+    const navigate = useNavigate();
+    const { register } = useRegister();
+    const { userLoginHandler } = useUserContext();
+
+    const registerHandler = async (_, formData) => {
+        const values = Object.fromEntries(formData);
+
+
+
+        const authData = await register(values.name, values.email, values.password);
+
+        userLoginHandler(authData);
+
+        navigate('/');
+    };
+
+    const [formState, registerAction, isPending] = useActionState(registerHandler, {
+        name: '',
+        email: '',
+        password: '',
+        "confirm-password": ''
+    });
 
     return (
         <section className="flex items-center justify-center min-h-screen bg-[#f8f8f8] px-4">
@@ -24,7 +50,7 @@ export default function Register() {
                 <div className="w-[360px] bg-white p-10 min-h-[580px] flex flex-col justify-between">
                     <h2 className="text-2xl font-bold text-center text-[#E9762B]">Create your BiteReview account</h2>
 
-                    <form className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6">
+                    <form action={registerAction} className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6">
                         {/* Name */}
                         <TextInput id="name" type="text" label="Name" placeholder="John Doe" />
 
@@ -37,13 +63,14 @@ export default function Register() {
                         {/* Confirm Password */}
                         <PasswordInput id="confirmPassword" label="Confirm Password" />
 
+                        {/* Submit Button */}
+                        <SubmitButton disabled={isPending}>
+                            {isPending ? "Registering..." : "Register"}
+                        </SubmitButton>
                     </form>
 
                     {/* Footer */}
                     <div className="mt-6">
-
-                        <SubmitButton>Register</SubmitButton>
-                        
                         <p className="text-sm text-center text-gray-600 mt-4">
                             Already have an account?{' '}
                             <Link to="/login" className="text-orange-500 hover:underline font-medium">

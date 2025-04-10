@@ -17,6 +17,15 @@ export const useLogin = () => {
     }
 };
 
+export const useRegister = () => {
+    const register = (name, email, password) =>
+        request.post(`${baseUrl}/register`, { name, email, password });
+
+    return {
+        register,
+    }
+};
+
 export const useLogout = () => {
     const { accessToken, userLogoutHandler } = useContext(UserContext);
     const [isLoggedOut, setIsLoggedOut] = useState(false);
