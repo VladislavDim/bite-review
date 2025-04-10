@@ -1,9 +1,14 @@
 import './Header.css';
 import logo from '../../assets/images/LogoSite.png';
 import { Link, useLocation } from 'react-router';
+import { useUserContext } from '../../contexts/UserContext';
+import { FaUser, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 
-export default function Header({ user }) {
+export default function Header() {
     const location = useLocation();
+    const { username, email } = useUserContext();
+
+    const isLoggedIn = !!email; // или !!accessToken ако използваш такъв
     const isActive = (path) => location.pathname === path;
 
     return (
@@ -15,19 +20,40 @@ export default function Header({ user }) {
                     <h1 className="text-2xl md:text-3xl font-bold text-white">BiteReview</h1>
                 </Link>
 
-                {/* Navigation - always visible */}
+                {/* Navigation */}
                 <nav>
                     <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-lg font-semibold text-white">
-                        <li><Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>Home</Link></li>
-                        <li><Link to="/restaurants" className={`nav-link ${isActive('/restaurants') ? 'active' : ''}`}>Restaurants</Link></li>
-                        <li><Link to="/profile" className={`nav-link ${isActive('/profile') ? 'active' : ''}`}>My Profile</Link></li>
-                        {!user ? (
+                        {!isLoggedIn ? (
                             <>
-                                <li><Link to="/login" className={`nav-link ${isActive('/login') ? 'active' : ''}`}>Login</Link></li>
-                                <li><Link to="/register" className={`nav-link ${isActive('/register') ? 'active' : ''}`}>Register</Link></li>
+                                <li>
+                                    <Link
+                                        to="/login"
+                                        className={`nav-link flex items-center gap-2 ${isActive('/login') ? 'active' : ''}`}
+                                    >
+                                        <FaSignInAlt />
+                                        <span>Login</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        to="/register"
+                                        className={`nav-link flex items-center gap-2 ${isActive('/register') ? 'active' : ''}`}
+                                    >
+                                        <FaUserPlus />
+                                        <span>Sign Up</span>
+                                    </Link>
+                                </li>
                             </>
                         ) : (
-                            <li><span className="text-white font-semibold">Welcome, {user.name}</span></li>
+                            <li>
+                                <Link
+                                    to="/profile"
+                                    className={`nav-link flex items-center gap-2 hover:no-underline ${isActive('/profile') ? 'active' : ''}`}
+                                >
+                                    <FaUser />
+                                    <span>{username ? ` ${username}` : ''}</span>
+                                </Link>
+                            </li>
                         )}
                     </ul>
                 </nav>
