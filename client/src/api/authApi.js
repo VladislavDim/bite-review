@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useCallback, useState } from "react";
 import { useContext } from "react";
 import request from "../utils/request"
 import { UserContext } from "../contexts/UserContext";
 
 const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/users`;
-console.log(baseUrl);
+
 export const useLogin = () => {
     const login = async (email, password) =>
         request.post(
@@ -17,3 +17,29 @@ export const useLogin = () => {
     }
 };
 
+export const useLogout = () => {
+    const { accessToken, userLogoutHandler } = useContext(UserContext);
+    const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+    const logout = useCallback(async () => {
+        if (!accessToken) return;
+
+        try {
+            await request.get(`${baseUrl}/logout`, null, {
+                headers: {
+                    'X-Authorization': accessToken,
+                },
+            });
+        } catch (err) {
+            console.error("Logout failed", err);
+        } finally {
+            userLogoutHandler();
+            setIsLoggedOut(true);
+        }
+    }, [accessToken, userLogoutHandler]);
+
+    return {
+        logout,
+        isLoggedOut,
+    };
+};

@@ -11,6 +11,7 @@ import Register from './pages/Register'
 import Restaurants from './pages/Restaurants'
 import RestaurantDetails from './pages/RestaurantDetails'
 import MyProfile from './pages/MyProfile'
+import Logout from './pages/Logout'
 
 import './App.css'
 
@@ -22,8 +23,12 @@ function App() {
         setAuthData(resultData);
     };
 
+    const userLogoutHandler = () => {
+        setAuthData({});
+    };
+
     return (
-        <UserContext.Provider value={{ ...authData, userLoginHandler }}>
+        <UserContext.Provider value={{ ...authData, userLoginHandler, userLogoutHandler }}>
             <div className="min-h-screen flex flex-col" >
 
                 <Header />
@@ -37,6 +42,7 @@ function App() {
                         <Route path='/restaurants' element={<Restaurants />} />
                         <Route path='/restaurants/:id/details' element={<RestaurantDetails />} />
                         <Route path='/profile' element={<MyProfile />} />
+                        <Route path='/logout' element={<Logout />} />
                     </Routes>
 
                 </main>
