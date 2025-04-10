@@ -6,12 +6,12 @@ import { UserContext } from "../contexts/UserContext";
 
 export default function MyProfile() {
     const navigate = useNavigate();
-    const { name, email } = useContext(UserContext);
+    const { name, email, _createdOn } = useContext(UserContext);
 
     const [user, setUser] = useState({
         name: name || "John Doe",
         email: email || "john@example.com",
-        joinedAt: "2024-10-15",
+        joinedAt: _createdOn || "2024-10-15",
         reviews: [
             { restaurant: "Sushi King", rating: 5, comment: "Amazing!" },
             { restaurant: "Pizza Bella", rating: 4.2, comment: "Great crust!" },
@@ -47,7 +47,7 @@ export default function MyProfile() {
                 <div className="flex-1">
                     <h1 className="text-2xl font-bold text-[#E9762B]">{user.name}</h1>
                     <p className="text-sm text-gray-600">{user.email}</p>
-                    <p className="text-sm text-gray-400">Joined: {user.joinedAt}</p>
+                    <p className="text-sm text-gray-400">Joined: {new Date(user.joinedAt).toLocaleDateString()}</p>
                 </div>
 
                 {/* Buttons */}
