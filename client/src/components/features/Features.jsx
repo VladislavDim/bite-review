@@ -1,26 +1,24 @@
+import { Link } from 'react-router';
 import './Features.css';
 
 export default function Features() {
-
     return (
-
         <section id="features" className="features-section">
-            <h3>Features</h3>
+            <h3>Explore BiteReview</h3>
             <div className="features-grid">
-                <div className="feature-card">
-                    <h4>Honest Reviews</h4>
-                    <p>Read genuine feedback from real customers and make informed decisions about where to eat.</p>
-                </div>
-                <div className="feature-card">
-                    <h4>Easy-to-Use</h4>
-                    <p>Submit your reviews easily and quickly with our user-friendly interface.</p>
-                </div>
-                <div className="feature-card">
-                    <h4>Ranking System</h4>
-                    <p>Earn rewards and higher ranking as you contribute more valuable reviews.</p>
-                </div>
+                <Link to="/restaurants" className="feature-card">
+                    <h4>Discover Restaurants</h4>
+                    <p>Browse through a variety of restaurants, explore their menus, and read customer reviews.</p>
+                </Link>
+                <Link to="/add-restaurant" className="feature-card">
+                    <h4>Share Your Place</h4>
+                    <p>Own a restaurant? Add it to our platform and let the world know what you offer.</p>
+                </Link>
+                <Link to="/my-restaurants" className="feature-card">
+                    <h4>My Restaurants</h4>
+                    <p>Manage your added restaurants, track ratings, and see which users engage the most.</p>
+                </Link>
             </div>
         </section>
-
     );
 }
