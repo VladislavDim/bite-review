@@ -46,7 +46,7 @@ export default function Hero() {
             <div className="carousel-flex-wrapper">
                 <div className="carousel-items">
                     {[...initialRestaurants, ...initialRestaurants].map((r, index) => (
-                        <Link to={`/restaurants/${r.id}`} key={index} className="carousel-card">
+                        <Link to={`/restaurants/${r.id}/details`} key={index} className="carousel-card">
                             <img src={r.image} alt={r.name} className="carousel-image" />
                             <div className="carousel-info">
                                 <h4>{r.name}</h4>
