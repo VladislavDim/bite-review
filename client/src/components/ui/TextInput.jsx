@@ -1,5 +1,6 @@
 export default function TextInput({
     id,
+    name = id,
     label,
     type = "text",
     placeholder = "",
@@ -15,6 +16,7 @@ export default function TextInput({
             <input
                 type={type}
                 id={id}
+                name={name}
                 placeholder={placeholder}
                 required={required}
                 className="w-full bg-transparent border-b-2 border-[#E9762B] text-gray-800 

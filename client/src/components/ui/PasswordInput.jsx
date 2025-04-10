@@ -3,6 +3,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function PasswordInput({
     id,
+    name = id,
     placeholder = "••••••••",
     label
 }) {
@@ -20,6 +21,7 @@ export default function PasswordInput({
                 <input
                     type={showPassword ? "text" : "password"}
                     id={id}
+                    name={name}
                     placeholder={placeholder}
                     required
                     className="w-full bg-transparent border-b-2 border-[#E9762B] text-gray-800 
@@ -29,7 +31,7 @@ export default function PasswordInput({
                 />
                 <span
                     onClick={() => setShowPassword(prev => !prev)}
-                    
+
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 
                                text-gray-500 hover:text-[#E9762B] 
                                cursor-pointer transition-transform duration-200 hover:scale-125"
