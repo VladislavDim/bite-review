@@ -12,11 +12,17 @@ export default function Register() {
     const navigate = useNavigate();
     const { register } = useRegister();
     const { userLoginHandler } = useUserContext();
+    const [error, setError] = useState("");
 
     const registerHandler = async (_, formData) => {
         const values = Object.fromEntries(formData);
 
+        if (values.password !== values["confirm-password"]) {
+            setError("Passwords do not match");
+            return;
+        }
 
+        setError(""); // clear previous error
 
         const authData = await register(values.name, values.email, values.password);
 
@@ -52,16 +58,21 @@ export default function Register() {
 
                     <form action={registerAction} className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6">
                         {/* Name */}
-                        <TextInput id="name" type="text" label="Name" placeholder="John Doe" />
+                        <TextInput id="name" name="name" type="text" label="Name" placeholder="John Doe" defaultValue={formState.name} />
 
                         {/* Email */}
-                         <TextInput id="email" type="email" label="Email" placeholder="you@example.com" />
+                        <TextInput id="email" name="email" type="email" label="Email" placeholder="you@example.com" defaultValue={formState.email} />
 
                         {/* Password */}
-                        <PasswordInput id="password" label="Password" />
+                        <PasswordInput id="password" name="password" label="Password" defaultValue={formState.password} />
 
                         {/* Confirm Password */}
-                        <PasswordInput id="confirmPassword" label="Confirm Password" />
+                        <PasswordInput id="confirmPassword" name="confirm-password" label="Confirm Password" defaultValue={formState["confirm-password"]} />
+
+                        {/* Error Message */}
+                        {error && (
+                            <p className="text-sm text-red-500 font-medium -mt-4">{error}</p>
+                        )}
 
                         {/* Submit Button */}
                         <SubmitButton disabled={isPending}>
