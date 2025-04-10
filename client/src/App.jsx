@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { Routes, Route } from 'react-router'
 
-import './App.css'
+import { UserContext } from './contexts/UserContext'
 
 import Footer from './components/footer/Footer'
 import Header from './components/header/Header'
@@ -9,12 +10,20 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Restaurants from './pages/Restaurants'
 import RestaurantDetails from './pages/RestaurantDetails'
+import MyProfile from './pages/MyProfile'
 
+import './App.css'
 
 function App() {
 
+    const [authData, setAuthData] = useState({});
+
+    const userLoginHandler = (resultData) => {
+        setAuthData(resultData);
+    };
+
     return (
-        <>
+        <UserContext.Provider value={{ ...authData, userLoginHandler }}>
             <div className="min-h-screen flex flex-col" >
 
                 <Header />
@@ -26,7 +35,8 @@ function App() {
                         <Route path='/register' element={<Register />} />
                         <Route path='/login' element={<Login />} />
                         <Route path='/restaurants' element={<Restaurants />} />
-                        <Route path='/restaurants/:id' element={<RestaurantDetails />} />
+                        <Route path='/restaurants/:id/details' element={<RestaurantDetails />} />
+                        <Route path='/profile' element={<MyProfile />} />
                     </Routes>
 
                 </main>
@@ -34,7 +44,7 @@ function App() {
                 <Footer />
 
             </div>
-        </>
+        </UserContext.Provider>
     )
 }
 
