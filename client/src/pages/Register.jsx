@@ -59,9 +59,8 @@ export default function Register() {
     return (
         <section className="flex items-center justify-center min-h-screen bg-[#f8f8f8] px-4">
             <div className="flex items-stretch shadow-xl rounded-xl overflow-hidden" style={{ boxShadow: '0 12px 30px rgba(233, 118, 43, 0.35)' }}>
-
                 {/* Image Box */}
-                <div className="hidden md:block w-[480px]">
+                <div className="hidden md:block w-[480px] min-h-[580px]">
                     <img
                         src={RegisterImage}
                         alt="Register visual"
@@ -119,13 +118,11 @@ export default function Register() {
                             <p className="text-sm text-red-500 font-medium text-center -mt-4">{serverError}</p>
                         )}
 
-                        {/* Submit Button */}
                         <SubmitButton disabled={isPending}>
                             {isPending ? "Registering..." : "Register"}
                         </SubmitButton>
                     </form>
 
-                    {/* Footer */}
                     <div className="mt-6">
                         <p className="text-sm text-center text-gray-600 mt-4">
                             Already have an account?{' '}
