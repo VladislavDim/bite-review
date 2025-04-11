@@ -1767,6 +1767,48 @@
                 _id: "eeff2233-4444-7777-bbbb-0987fedcba21"
             }
         },
+        reviews: {
+            "1b2d3e4f-1111-aaaa-bbbb-111122223333": {
+                restaurantId: "9a1b2c3d-1111-4444-8888-1234567890ab",
+                creatorId: "1e2c5a74-3d19-4f8e-b8fa-d0b5e3a8a101",
+                creatorName: "Anna",
+                rating: 4.5,
+                comment: "Great seafood and fantastic view!",
+                _createdOn: 1714590000001
+            },
+            "2c3d4e5f-2222-bbbb-cccc-222233334444": {
+                restaurantId: "9a1b2c3d-1111-4444-8888-1234567890ab",
+                creatorId: "4ad8b2f5-56ce-4a93-a241-7e27f19a2d15",
+                creatorName: "Leo",
+                rating: 4.2,
+                comment: "Tasty food and nice staff.",
+                _createdOn: 1714590000002
+            },
+            "3e4f5a6b-3333-cccc-dddd-333344445555": {
+                restaurantId: "9a1b2c3d-1111-4444-8888-1234567890ab",
+                creatorId: "a2fbf760-1d20-4f26-9f33-1e8bc888a76e",
+                creatorName: "Mira",
+                rating: 5.0,
+                comment: "The seafood platter is a must try!",
+                _createdOn: 1714590000003
+            },
+            "4f5a6b7c-4444-dddd-eeee-444455556666": {
+                restaurantId: "9a1b2c3d-1111-4444-8888-1234567890ab",
+                creatorId: "68f2c1b9-cbb9-4cfc-8b56-3fa28f5a552d",
+                creatorName: "Ivan",
+                rating: 3.8,
+                comment: "Nice place, but a bit crowded.",
+                _createdOn: 1714590000004
+            },
+            "5a6b7c8d-5555-eeee-ffff-555566667777": {
+                restaurantId: "9a1b2c3d-1111-4444-8888-1234567890ab",
+                creatorId: "5b3a9131-cc3b-4a5d-b78a-75b89c4e9f10",
+                creatorName: "Maria",
+                rating: 4.7,
+                comment: "Exceptional food and view. Loved it!",
+                _createdOn: 1714590000005
+            }
+        },
         members: {
             "cc9b0a0f-655d-45d7-9857-0a61c6bb2c4d": {
                 _ownerId: "35c62d76-8152-4626-8712-eeb96381bea8",
