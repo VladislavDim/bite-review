@@ -57,4 +57,21 @@ export const useGetRestaurantById = () => {
         getById,
     };
 };
+
+export const useUpdateRestaurant = () => {
+    const { accessToken } = useContext(UserContext);
+
+    const updateRestaurant = async (id, updatedData) => {
+        return request.put(`${baseUrl}/${id}`, updatedData, {
+            headers: {
+                "X-Authorization": accessToken,
+            },
+        });
+    };
+
+    return {
+        updateRestaurant,
+    };
+};
+
 };
