@@ -16,6 +16,7 @@ import Logout from './pages/Logout'
 import './App.css'
 import AddRestaurant from './pages/AddRestaurant'
 import NotFound from './pages/NotFound'
+import MyRestaurants from './pages/MyRestaurants'
 
 function App() {
 
@@ -46,6 +47,7 @@ function App() {
                         <Route path='/profile' element={<MyProfile />} />
                         <Route path='/logout' element={<Logout />} />
                         <Route path='/add-restaurant' element={<AddRestaurant />} />
+                        <Route path='/my-restaurants' element={<MyRestaurants />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
 
