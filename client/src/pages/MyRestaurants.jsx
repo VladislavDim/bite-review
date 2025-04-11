@@ -1,17 +1,38 @@
 import { useNavigate } from "react-router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { useGetAllRestaurants } from "../api/restaurantApi";
+import { useDeleteRestaurant, useGetAllRestaurants } from "../api/restaurantApi";
 
 export default function MyRestaurants() {
     const navigate = useNavigate();
     const { _id: userId } = useContext(UserContext);
     const { restaurants, loading, error } = useGetAllRestaurants();
+    const { deleteRestaurant } = useDeleteRestaurant();
+    const [restaurantList, setRestaurantList] = useState([]);
 
-    const ownedRestaurants = restaurants.filter(r => r._ownerId === userId);
+    useEffect(() => {
+        if (restaurants?.length) {
+            setRestaurantList(restaurants);
+        }
+    }, [restaurants]);
+
+    const ownedRestaurants = restaurantList.filter(r => r._ownerId === userId);
+
+    const handleDelete = async (id) => {
+        const confirm = window.confirm("Are you sure you want to delete this restaurant?");
+        if (!confirm) return;
+
+        try {
+            await deleteRestaurant(id);
+            setRestaurantList((prev) => prev.filter((r) => r._id !== id));
+        } catch (err) {
+            console.error("Failed to delete restaurant:", err);
+        }
+    };
 
     if (loading) return <p className="text-center mt-10">Loading your restaurants...</p>;
     if (error) return <p className="text-center mt-10 text-red-500">Failed to load restaurants.</p>;
+
 
     return (
         <section className="max-w-5xl mx-auto px-6 py-10">
@@ -48,7 +69,7 @@ export default function MyRestaurants() {
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => console.log("Delete", r._id)}
+                                    onClick={() => handleDelete(r._id)}
                                     className="text-sm px-3 py-1 rounded bg-[#f87171] text-white hover:bg-[#ef4444] transition-colors"
                                 >
                                     Delete

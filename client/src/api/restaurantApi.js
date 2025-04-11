@@ -74,4 +74,18 @@ export const useUpdateRestaurant = () => {
     };
 };
 
+export const useDeleteRestaurant = () => {
+    const { accessToken } = useContext(UserContext);
+
+    const deleteRestaurant = async (id) => {
+        return request.delete(`${baseUrl}/${id}`, null, {
+            headers: {
+                "X-Authorization": accessToken,
+            },
+        });
+    };
+
+    return {
+        deleteRestaurant,
+    };
 };
