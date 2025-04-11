@@ -12,34 +12,38 @@ export default function MyProfile() {
     const { getAll: getAllReviews } = useGetAllReviews();
     const { restaurants } = useGetAllRestaurants();
 
-    const [reviews, setReviews] = useState([]);
+    const [reviewsReceived, setReviewsReceived] = useState([]);
 
     useEffect(() => {
-        const fetchUserReviews = async () => {
+        const fetchReceivedReviews = async () => {
             try {
                 const allReviews = await getAllReviews();
-                const myReviews = allReviews
-                    .filter((r) => r.creatorId === userId)
-                    .map((review) => {
+                const myRestaurants = restaurants.filter(r => r._ownerId === userId);
+                const myRestaurantIds = myRestaurants.map(r => r._id);
+
+                const received = allReviews
+                    .filter(r => myRestaurantIds.includes(r.restaurantId))
+                    .map(review => {
                         const restaurant = restaurants.find(r => r._id === review.restaurantId);
                         return {
                             ...review,
                             restaurantName: restaurant?.name || "Restaurant",
-                            restaurantId: restaurant?._id
+                            restaurantId: restaurant?._id,
                         };
                     });
-                setReviews(myReviews);
+
+                setReviewsReceived(received);
             } catch (err) {
-                console.error("Failed to load user reviews:", err);
+                console.error("Failed to load reviews:", err);
             }
         };
 
-        fetchUserReviews();
+        fetchReceivedReviews();
     }, [userId, restaurants]);
 
     const averageRating =
-        reviews.length > 0
-            ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        reviewsReceived.length > 0
+            ? reviewsReceived.reduce((sum, r) => sum + r.rating, 0) / reviewsReceived.length
             : 0;
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -47,8 +51,8 @@ export default function MyProfile() {
 
     const indexOfLast = currentPage * reviewsPerPage;
     const indexOfFirst = indexOfLast - reviewsPerPage;
-    const currentReviews = reviews.slice(indexOfFirst, indexOfLast);
-    const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+    const currentReviews = reviewsReceived.slice(indexOfFirst, indexOfLast);
+    const totalPages = Math.ceil(reviewsReceived.length / reviewsPerPage);
 
     return (
         <section className="max-w-4xl mx-auto px-4 py-10">
@@ -56,7 +60,7 @@ export default function MyProfile() {
             <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
                 {/* Avatar */}
                 <div className="w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center text-4xl font-bold text-[#E9762B]">
-                    {name[0]}
+                    {name?.[0] || "?"}
                 </div>
 
                 {/* Info */}
@@ -87,7 +91,7 @@ export default function MyProfile() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-center">
                 <div className="bg-white border rounded-lg p-4 shadow-sm">
                     <p className="text-sm text-gray-500">Reviews</p>
-                    <p className="text-xl font-semibold text-[#E9762B]">{reviews.length}</p>
+                    <p className="text-xl font-semibold text-[#E9762B]">{reviewsReceived.length}</p>
                 </div>
                 <div className="bg-white border rounded-lg p-4 shadow-sm col-span-2 md:col-span-1">
                     <p className="text-sm text-gray-500">Average Rating</p>
@@ -102,10 +106,14 @@ export default function MyProfile() {
 
             {/* Review List */}
             <div>
-                <h2 className="text-lg font-semibold text-[#E9762B] mb-4">My Reviews</h2>
+                <h2 className="text-lg font-semibold text-[#E9762B] mb-4">Reviews Received</h2>
                 <div className="space-y-4">
                     {currentReviews.map((rev, i) => (
-                        <Link to={`/restaurants/${rev.restaurantId}/details`} key={i} className="block bg-white border p-4 rounded-lg shadow-sm hover:shadow-md transition">
+                        <Link
+                            to={`/restaurants/${rev.restaurantId}/details`}
+                            key={i}
+                            className="block bg-white border p-4 rounded-lg shadow-sm hover:shadow-md transition"
+                        >
                             <div className="flex justify-between items-center mb-1">
                                 <h3 className="font-medium text-gray-800">{rev.restaurantName}</h3>
                                 <StarRatingDisplay rating={rev.rating} size={18} />
