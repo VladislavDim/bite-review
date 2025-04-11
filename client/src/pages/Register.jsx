@@ -30,9 +30,30 @@ export default function Register() {
         }));
     };
 
-        if (values.password !== values["confirm-password"]) {
-            setError("Passwords do not match");
-            return;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const validationErrors = {};
+
+        if (!formState.name.trim()) validationErrors.name = "Name is required.";
+        if (!formState.email.trim()) validationErrors.email = "Email is required.";
+        if (!formState.password.trim()) validationErrors.password = "Password is required.";
+        if (formState.password !== formState.confirmPassword) validationErrors.confirmPassword = "Passwords do not match.";
+
+        setErrors(validationErrors);
+        setServerError("");
+
+        if (Object.keys(validationErrors).length > 0) return;
+
+        try {
+            setIsPending(true);
+            const authData = await register(formState.name, formState.email, formState.password);
+            userLoginHandler(authData);
+            navigate("/restaurants");
+        } catch (err) {
+            console.error("Register failed:", err);
+            setServerError(err.message || "Registration failed. Try again.");
+        } finally {
+            setIsPending(false);
         }
 
         setError(""); // clear previous error
