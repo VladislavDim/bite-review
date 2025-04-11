@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import { Routes, Route } from 'react-router'
 
-import { UserContext } from './contexts/UserContext'
-
+import UserProvider from "./providers/UserProvider";
 import Footer from './components/footer/Footer'
 import Header from './components/header/Header'
 import Home from './pages/Home'
@@ -21,18 +19,8 @@ import EditRestaurant from './pages/EditRestaurant'
 
 function App() {
 
-    const [authData, setAuthData] = useState({});
-
-    const userLoginHandler = (resultData) => {
-        setAuthData(resultData);
-    };
-
-    const userLogoutHandler = () => {
-        setAuthData({});
-    };
-
     return (
-        <UserContext.Provider value={{ ...authData, userLoginHandler, userLogoutHandler }}>
+        <UserProvider>
             <div className="min-h-screen flex flex-col" >
 
                 <Header />
@@ -58,7 +46,7 @@ function App() {
                 <Footer />
 
             </div>
-        </UserContext.Provider>
+        </UserProvider>
     )
 }
 
