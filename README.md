@@ -1,26 +1,12 @@
-# BiteReview - React App
+# 🍽️ BiteReview - React Application
 
-**Description:**  
-BiteReview is a simple web application that allows restaurant owners and customers to interact with restaurant reviews. The platform allows restaurant owners to manage their establishments, while customers can browse and rate them.
+**BiteReview** is a modern restaurant review platform where users can browse, review, and manage restaurants. The application is structured to serve both restaurant owners and regular users, offering a smooth and dynamic experience with personalized features.
 
-## Key Features:
+## 🚀 Live Preview
+> Coming soon...
 
-### For Business Owners:
-- Add, edit, and delete their restaurant listings.
-- View other restaurant listings and rate them, but cannot rate their own establishments.
+---
 
-### For Customers:
-- Browse a list of restaurants and view their details.
-- Rate and review restaurants, contributing to the overall ratings and feedback.
-- View existing ratings and reviews of each restaurant.
+## 📂 Project Structure
 
-### For Guests (Not Logged In):
-- Access a list of restaurants and view ratings and reviews, but cannot leave comments or ratings themselves.
-
-## Technologies Used:
-- **Frontend:** React.js, React Router, TailwindCSS
-- **Backend:** SoftUni Practice Server (REST API)
-- **Authentication:** JWT (JSON Web Tokens)
-
-## Current Status: 
-In progress
+BiteReview-React-App/ │ ├── client/ # React frontend │ ├── src/ # Source files │ ├── index.html │ ├── package.json │ └── vite.config.js │ ├── server/ # Local mock backend (provided by SoftUni) │ ├── data/ # Mock database (JSON) │ └── server.js # API server logic │ ├── LICENSE └── README.md
