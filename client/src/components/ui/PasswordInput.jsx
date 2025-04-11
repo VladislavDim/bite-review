@@ -5,7 +5,10 @@ export default function PasswordInput({
     id,
     name = id,
     placeholder = "••••••••",
-    label
+    label,
+    error,
+    value,
+    onChange
 }) {
 
     const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +27,8 @@ export default function PasswordInput({
                     name={name}
                     placeholder={placeholder}
                     required
+                    value={value}
+                    onChange={onChange}
                     className="w-full bg-transparent border-b-2 border-[#E9762B] text-gray-800 
                                placeholder-gray-400 pr-10 focus:outline-none 
                                focus:ring-1 focus:ring-orange-200 focus:border-[#E9762B] 
@@ -39,6 +44,7 @@ export default function PasswordInput({
                     {showPassword ? <FiEye /> : <FiEyeOff />}
                 </span>
             </div>
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
     );
 }
