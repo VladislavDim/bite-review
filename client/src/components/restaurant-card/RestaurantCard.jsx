@@ -1,32 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { useGetReviewsByRestaurantId } from "../../api/reviewApi";
 
-export default function RestaurantCard({ _id, name, address, images = [], features }) {
+export default function RestaurantCard({ _id, name, address, images = [], features, rating = 0, reviewCount = 0 }) {
     const [hovered, setHovered] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [reviews, setReviews] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const { getAll } = useGetReviewsByRestaurantId();
-
-    useEffect(() => {
-        const fetchReviews = async () => {
-            try {
-                const res = await getAll(_id);
-                setReviews(res);
-            } catch (err) {
-                console.error("Error fetching reviews:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchReviews();
-    }, [_id]);
-
-    const avgRating = reviews.length
-        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-        : 0;
 
     useEffect(() => {
         let interval;
@@ -64,7 +41,8 @@ export default function RestaurantCard({ _id, name, address, images = [], featur
                     <div className={`transition-all duration-300 px-4 py-3 ${hovered ? "bg-white text-black" : "bg-gradient-to-r from-[#E9762B] to-[#f79d4d] text-white"}`}>
                         <h3 className="text-lg font-bold">{name}</h3>
                         <p className="text-sm font-medium mt-1">
-                            ⭐ {loading ? "..." : avgRating.toFixed(1)} / 5
+                            ⭐ {typeof rating === "number" && rating > 0 ? rating.toFixed(1) : "0"} / 5
+                            <span className="ml-2 text-xs">({reviewCount} review{reviewCount === 1 ? "" : "s"})</span>
                         </p>
 
                         {hovered && (
