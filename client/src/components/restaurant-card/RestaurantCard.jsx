@@ -21,7 +21,7 @@ export default function RestaurantCard({ _id, name, rating, address, images = []
   }, [hovered, images]);
 
   return (
-    <Link to={`/restaurants/${_id}`} >
+    <Link to={`/restaurants/${_id}/details`} >
       <div
         className="transition-transform duration-300 will-change-transform"
         onMouseEnter={() => setHovered(true)}
