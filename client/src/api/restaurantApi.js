@@ -48,4 +48,13 @@ export const useGetAllRestaurants = () => {
     };
 };
 
+export const useGetRestaurantById = () => {
+    const getById = async (id) => {
+        return request.get(`${baseUrl}/${id}`);
+    };
+
+    return {
+        getById,
+    };
+};
 };
