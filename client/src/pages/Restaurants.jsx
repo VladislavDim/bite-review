@@ -8,10 +8,12 @@ import { useGetAllRestaurants } from "../api/restaurantApi";
 import RestaurantCard from "../components/restaurant-card/RestaurantCard";
 import ScrollToTop from "../components/ui/ScrollToTop";
 import { UserContext } from "../contexts/UserContext";
+import { Link } from "react-router";
 
 export default function Restaurants() {
     const ITEMS_PER_LOAD = 10;
     const { _id: userId } = useContext(UserContext);
+    const isGuest = !userId;
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
     const [filter, setFilter] = useState("all");
     const [sort, setSort] = useState("name-asc");
@@ -88,10 +90,26 @@ export default function Restaurants() {
                 </select>
             </div>
 
+            {/* Guest Prompt */}
+            {isGuest && filteredRestaurants.length === 0 && !loading && !error && (
+                <div className="text-center mt-10 bg-white border border-orange-200 p-6 rounded-lg shadow-md max-w-xl mx-auto">
+                    <h3 className="text-xl font-semibold text-[#E9762B] mb-2">Want to leave reviews or add restaurants?</h3>
+                    <p className="text-gray-600 mb-4">
+                        Sign up to join our community and share your dining experiences!
+                    </p>
+                    <Link
+                        to="/register"
+                        className="inline-block px-6 py-2 bg-gradient-to-r from-[#E9762B] to-[#f79d4d] text-white rounded-lg font-medium hover:scale-105 transition"
+                    >
+                        Create an Account
+                    </Link>
+                </div>
+            )}
+
             {/* Content */}
             <div className="max-w-6xl mx-auto">
                 {loading && <p className="text-center text-gray-500">Loading...</p>}
-                {!loading && filteredRestaurants.length === 0 && (
+                {!loading && filteredRestaurants.length === 0 && !isGuest && (
                     <p className="text-center text-gray-500">There are no restaurants yet.</p>
                 )}
                 {error && !loading && (
@@ -115,6 +133,7 @@ export default function Restaurants() {
                                     address={restaurant.address || restaurant.location}
                                     rating={restaurant.rating || 0}
                                     images={restaurant.images}
+                                    features={restaurant.features}
                                 />
                             ))}
                         </div>
