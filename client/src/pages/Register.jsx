@@ -10,8 +10,7 @@ import { UserContext } from "../contexts/UserContext";
 export default function Register() {
     const navigate = useNavigate();
     const { register } = useRegister();
-    const { userLoginHandler } = useUserContext();
-    const [error, setError] = useState("");
+    const { userLoginHandler } = useContext(UserContext);
 
     const [formState, setFormState] = useState({
         name: "",
