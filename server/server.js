@@ -1604,6 +1604,61 @@
                 _id: "733fa9a1-26b6-490d-b299-21f120b2f53a"
             }
         },
+        restaurants: {
+            "9a1b2c3d-1111-4444-8888-1234567890ab": {
+                _ownerId: "3fec17de-c5f3-40f2-945c-836b578a533d",
+                name: "Ocean Pearl",
+                location: "Pier 7, Dubai Marina, Dubai",
+                description: "Upscale seafood spot with panoramic views of the Persian Gulf and fresh daily catch.",
+                images: [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxUCrIfzlt6dnjOf7KWdHd6mbIxvAjRnahgg&s",
+                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/33/10/3e/manila-bay-kitchen-is.jpg",
+                    "https://www.theoceanpearl.in/assets/images/mangalore/dining/1a.jpg"
+                ],
+                features: ["Outdoor Seating", "Wi-Fi", "Parking", "Credit Card Payment"],
+                _createdOn: 1712716800000,
+                _id: "9a1b2c3d-1111-4444-8888-1234567890ab"
+            },
+            "7c6d5e4f-2222-5555-9999-abcdef123456": {
+                _ownerId: "3fec17de-c5f3-40f2-945c-836b578a533d",
+                name: "Alpine Heath",
+                location: "Bahnhofstrasse 5, Zermatt, Switzerland",
+                description: "Charming alpine restaurant serving traditional Swiss dishes with a cozy mountain ambiance.",
+                images: [
+                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/05/31/c0/aha-alpine-heath-resort.jpg?w=700&h=-1&s=1",
+                    "https://northwoodoffice-assets.imgix.net/goBallantyne/images/heroes/NORTHITALIA156-2.jpg?auto=compress%2Cformat&crop=focalpoint&fit=crop&fp-debug=&fp-x=0.4993&fp-y=0.7915&fp-z=1&h=1080&ixlib=php-3.1.0&q=80&v=1718293452&w=1920"
+                ],
+                features: ["Vegan Options", "Family Friendly", "Wi-Fi", "Smoking Area"],
+                _createdOn: 1712716800000,
+                _id: "7c6d5e4f-2222-5555-9999-abcdef123456"
+            },
+            "abcd1234-3333-6666-aaaa-7890abcdef12": {
+                _ownerId: "5b3a9131-cc3b-4a5d-b78a-75b89c4e9f10",
+                name: "Rustic Spoon NYC",
+                location: "122 Orchard St, New York, NY, USA",
+                description: "Farm-to-table concept in the heart of Manhattan offering seasonal American fare.",
+                images: [
+                    "https://teamnutrition.ca/sites/default/files/articles/Inte%CC%81rieur%20restaurant%20-%20Restaurant%20interior.jpeg",
+                    "https://i.natgeofe.com/n/04cf2a79-4a49-45eb-90f8-38356167690d/image00037.jpeg"
+                ],
+                features: ["Pet Friendly", "Wheelchair Accessible", "Wi-Fi", "Credit Card Payment"],
+                _createdOn: 1712716800000,
+                _id: "abcd1234-3333-6666-aaaa-7890abcdef12"
+            },
+            "eeff2233-4444-7777-bbbb-0987fedcba21": {
+                _ownerId: "5b3a9131-cc3b-4a5d-b78a-75b89c4e9f10",
+                name: "Greenhouse Café",
+                location: "Shoreditch High St 81, London, UK",
+                description: "Bohemian garden café famous for its organic brunches and botanical interior design.",
+                images: [
+                    "https://assets.architecturaldigest.in/photos/64f84cc61d4896b633fba77a/master/w_1600%2Cc_limit/The%2520art%2520deco%2520inspired%2520de%25CC%2581cor%2520of%2520CIRQA%25201960%2520.jpg",
+                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/56/71/59/atmosphere.jpg?w=600&h=-1&s=1"
+                ],
+                features: ["Outdoor Seating", "Vegan Options", "Live Music", "Wi-Fi"],
+                _createdOn: 1712716800000,
+                _id: "eeff2233-4444-7777-bbbb-0987fedcba21"
+            }
+        },
         members: {
             "cc9b0a0f-655d-45d7-9857-0a61c6bb2c4d": {
                 _ownerId: "35c62d76-8152-4626-8712-eeb96381bea8",
