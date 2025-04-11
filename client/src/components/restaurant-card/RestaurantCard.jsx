@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 
-export default function RestaurantCard({ _id, name, rating, address, images = [] }) {
+export default function RestaurantCard({ _id, name, rating, address, images = [], features }) {
   const [hovered, setHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -53,7 +53,12 @@ export default function RestaurantCard({ _id, name, rating, address, images = []
             {hovered && (
               <div className="mt-2 text-sm space-y-1">
                 <p><span className="font-semibold">Address:</span> {address}</p>
-                <p><span className="font-semibold">Info:</span> Open daily • Outdoor seating</p>
+                {features?.length > 0 && (
+                  <p>
+                    <span className="font-semibold">Features:</span>{" "}
+                    {features.join(" • ")}
+                  </p>
+                )}
               </div>
             )}
           </div>
