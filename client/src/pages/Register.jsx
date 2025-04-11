@@ -1,12 +1,11 @@
 import { Link, useNavigate } from "react-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import RegisterImage from "../assets/images/Register.png";
 import PasswordInput from "../components/ui/PasswordInput";
 import TextInput from "../components/ui/TextInput";
 import SubmitButton from "../components/ui/SubmitButton";
-import { useActionState } from "react";
 import { useRegister } from "../api/authApi";
-import { useUserContext } from "../contexts/UserContext";
+import { UserContext } from "../contexts/UserContext";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -14,8 +13,22 @@ export default function Register() {
     const { userLoginHandler } = useUserContext();
     const [error, setError] = useState("");
 
-    const registerHandler = async (_, formData) => {
-        const values = Object.fromEntries(formData);
+    const [formState, setFormState] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
+    const [errors, setErrors] = useState({});
+    const [serverError, setServerError] = useState("");
+    const [isPending, setIsPending] = useState(false);
+
+    const handleChange = (e) => {
+        setFormState((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value
+        }));
+    };
 
         if (values.password !== values["confirm-password"]) {
             setError("Passwords do not match");
@@ -56,22 +69,49 @@ export default function Register() {
                 <div className="w-[360px] bg-white p-10 flex flex-col justify-between">
                     <h2 className="text-2xl font-bold text-center text-[#E9762B]">Create your BiteReview account</h2>
 
-                    <form action={registerAction} className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6">
-                        {/* Name */}
-                        <TextInput id="name" name="name" type="text" label="Name" placeholder="John Doe" defaultValue={formState.name} />
+                    <form onSubmit={handleSubmit} className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6" noValidate>
+                        <TextInput
+                            id="name"
+                            name="name"
+                            type="text"
+                            label="Name"
+                            placeholder="John Doe"
+                            value={formState.name}
+                            onChange={handleChange}
+                            error={errors.name}
+                        />
 
-                        {/* Email */}
-                        <TextInput id="email" name="email" type="email" label="Email" placeholder="you@example.com" defaultValue={formState.email} />
+                        <TextInput
+                            id="email"
+                            name="email"
+                            type="email"
+                            label="Email"
+                            placeholder="you@example.com"
+                            value={formState.email}
+                            onChange={handleChange}
+                            error={errors.email}
+                        />
 
-                        {/* Password */}
-                        <PasswordInput id="password" name="password" label="Password" defaultValue={formState.password} />
+                        <PasswordInput
+                            id="password"
+                            name="password"
+                            label="Password"
+                            value={formState.password}
+                            onChange={handleChange}
+                            error={errors.password}
+                        />
 
-                        {/* Confirm Password */}
-                        <PasswordInput id="confirmPassword" name="confirm-password" label="Confirm Password" defaultValue={formState["confirm-password"]} />
+                        <PasswordInput
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            label="Confirm Password"
+                            value={formState.confirmPassword}
+                            onChange={handleChange}
+                            error={errors.confirmPassword}
+                        />
 
-                        {/* Error Message */}
-                        {error && (
-                            <p className="text-sm text-red-500 font-medium -mt-4">{error}</p>
+                        {serverError && (
+                            <p className="text-sm text-red-500 font-medium text-center -mt-4">{serverError}</p>
                         )}
 
                         {/* Submit Button */}
