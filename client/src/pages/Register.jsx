@@ -43,7 +43,7 @@ export default function Register() {
             <div className="flex items-stretch shadow-xl rounded-xl overflow-hidden" style={{ boxShadow: '0 12px 30px rgba(233, 118, 43, 0.35)' }}>
 
                 {/* Image Box */}
-                <div className="hidden md:block h-[580px] w-[480px]">
+                <div className="hidden md:block w-[480px]">
                     <img
                         src={RegisterImage}
                         alt="Register visual"
@@ -53,7 +53,7 @@ export default function Register() {
                 </div>
 
                 {/* Register Form */}
-                <div className="w-[360px] bg-white p-10 min-h-[580px] flex flex-col justify-between">
+                <div className="w-[360px] bg-white p-10 flex flex-col justify-between">
                     <h2 className="text-2xl font-bold text-center text-[#E9762B]">Create your BiteReview account</h2>
 
                     <form action={registerAction} className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6">
