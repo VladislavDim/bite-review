@@ -131,7 +131,6 @@ export default function Restaurants() {
                                     _id={restaurant._id}
                                     name={restaurant.name}
                                     address={restaurant.address || restaurant.location}
-                                    rating={restaurant.rating || 0}
                                     images={restaurant.images}
                                     features={restaurant.features}
                                 />
