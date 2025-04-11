@@ -1,10 +1,11 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState, useEffect } from "react";
 import {
     FaUsers,
     FaListUl,
     FaUtensils,
 } from "react-icons/fa";
 import { useGetAllRestaurants } from "../api/restaurantApi";
+import { useGetAllReviews } from "../api/reviewApi";
 import RestaurantCard from "../components/restaurant-card/RestaurantCard";
 import ScrollToTop from "../components/ui/ScrollToTop";
 import { UserContext } from "../contexts/UserContext";
@@ -17,8 +18,42 @@ export default function Restaurants() {
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
     const [filter, setFilter] = useState("all");
     const [sort, setSort] = useState("name-asc");
+    const [ratingsMap, setRatingsMap] = useState({});
+    const [reviewCounts, setReviewCounts] = useState({});
 
     const { restaurants, loading, error } = useGetAllRestaurants();
+    const { getAll: getAllReviews } = useGetAllReviews();
+
+    useEffect(() => {
+        const fetchRatings = async () => {
+            try {
+                const allReviews = await getAllReviews();
+                const map = {};
+                const counts = {};
+
+                allReviews.forEach((rev) => {
+                    if (!map[rev.restaurantId]) {
+                        map[rev.restaurantId] = [];
+                    }
+                    map[rev.restaurantId].push(rev.rating);
+                });
+
+                const ratings = {};
+                for (const id in map) {
+                    const total = map[id].reduce((a, b) => a + b, 0);
+                    ratings[id] = total / map[id].length;
+                    counts[id] = map[id].length;
+                }
+
+                setRatingsMap(ratings);
+                setReviewCounts(counts);
+            } catch (err) {
+                console.error("Failed to fetch all reviews", err);
+            }
+        };
+
+        fetchRatings();
+    }, []);
 
     const filteredRestaurants = useMemo(() => {
         let result = [...restaurants];
@@ -37,18 +72,18 @@ export default function Restaurants() {
                 result.sort((a, b) => b.name.localeCompare(a.name));
                 break;
             case "rating-asc":
-                result.sort((a, b) => (a.rating || 0) - (b.rating || 0));
+                result.sort((a, b) => (ratingsMap[a._id] || 0) - (ratingsMap[b._id] || 0));
                 break;
             case "rating-desc":
-                result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                result.sort((a, b) => (ratingsMap[b._id] || 0) - (ratingsMap[a._id] || 0));
                 break;
             case "reviews-desc":
-                result.sort((a, b) => (b.reviews?.length || 0) - (a.reviews?.length || 0));
+                result.sort((a, b) => (reviewCounts[b._id] || 0) - (reviewCounts[a._id] || 0));
                 break;
         }
 
         return result;
-    }, [restaurants, filter, sort, userId]);
+    }, [restaurants, filter, sort, userId, ratingsMap, reviewCounts]);
 
     const visibleRestaurants = filteredRestaurants.slice(0, visibleCount);
 
@@ -63,8 +98,8 @@ export default function Restaurants() {
             {/* Filters */}
             <div className="flex flex-wrap justify-center gap-4 mb-6">
                 {[{ label: "All", icon: <FaListUl />, value: "all" },
-                  { label: "My Restaurants", icon: <FaUtensils />, value: "mine" },
-                  { label: "Others", icon: <FaUsers />, value: "others" }].map(({ label, icon, value }) => (
+                { label: "My Restaurants", icon: <FaUtensils />, value: "mine" },
+                { label: "Others", icon: <FaUsers />, value: "others" }].map(({ label, icon, value }) => (
                     <button
                         key={value}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm shadow-sm transition font-medium
@@ -133,6 +168,8 @@ export default function Restaurants() {
                                     address={restaurant.address || restaurant.location}
                                     images={restaurant.images}
                                     features={restaurant.features}
+                                    rating={ratingsMap[restaurant._id]}
+                                    reviewCount={reviewCounts[restaurant._id] || 0}
                                 />
                             ))}
                         </div>
