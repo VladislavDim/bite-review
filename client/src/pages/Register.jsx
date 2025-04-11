@@ -55,22 +55,7 @@ export default function Register() {
         } finally {
             setIsPending(false);
         }
-
-        setError(""); // clear previous error
-
-        const authData = await register(values.name, values.email, values.password);
-
-        userLoginHandler(authData);
-
-        navigate('/');
     };
-
-    const [formState, registerAction, isPending] = useActionState(registerHandler, {
-        name: '',
-        email: '',
-        password: '',
-        "confirm-password": ''
-    });
 
     return (
         <section className="flex items-center justify-center min-h-screen bg-[#f8f8f8] px-4">
