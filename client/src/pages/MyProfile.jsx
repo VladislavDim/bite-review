@@ -1,38 +1,54 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaUserEdit, FaSignOutAlt } from "react-icons/fa";
 import StarRatingDisplay from "../components/ui/StarRatingDisplay";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { UserContext } from "../contexts/UserContext";
+import { useGetAllReviews } from "../api/reviewApi";
+import { useGetAllRestaurants } from "../api/restaurantApi";
 
 export default function MyProfile() {
     const navigate = useNavigate();
-    const { name, email, _createdOn } = useContext(UserContext);
+    const { _id: userId, name, email, _createdOn } = useContext(UserContext);
+    const { getAll: getAllReviews } = useGetAllReviews();
+    const { restaurants } = useGetAllRestaurants();
 
-    const [user, setUser] = useState({
-        name: name || "John Doe",
-        email: email || "john@example.com",
-        joinedAt: _createdOn || "2024-10-15",
-        reviews: [
-            { restaurant: "Sushi King", rating: 5, comment: "Amazing!" },
-            { restaurant: "Pizza Bella", rating: 4.2, comment: "Great crust!" },
-            { restaurant: "Burgers & Co", rating: 3.5, comment: "Could be better" },
-            { restaurant: "Pasta House", rating: 4.8, comment: "Excellent pasta!" },
-            { restaurant: "Green Garden", rating: 2.9, comment: "Too salty" },
-            { restaurant: "Cafe Delight", rating: 4.1, comment: "Cozy atmosphere" },
-            { restaurant: "Vegan Vibes", rating: 4.6, comment: "Tasty and fresh" },
-        ],
-    });
+    const [reviews, setReviews] = useState([]);
+
+    useEffect(() => {
+        const fetchUserReviews = async () => {
+            try {
+                const allReviews = await getAllReviews();
+                const myReviews = allReviews
+                    .filter((r) => r.creatorId === userId)
+                    .map((review) => {
+                        const restaurant = restaurants.find(r => r._id === review.restaurantId);
+                        return {
+                            ...review,
+                            restaurantName: restaurant?.name || "Restaurant",
+                            restaurantId: restaurant?._id
+                        };
+                    });
+                setReviews(myReviews);
+            } catch (err) {
+                console.error("Failed to load user reviews:", err);
+            }
+        };
+
+        fetchUserReviews();
+    }, [userId, restaurants]);
 
     const averageRating =
-        user.reviews.reduce((sum, r) => sum + r.rating, 0) / user.reviews.length;
+        reviews.length > 0
+            ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+            : 0;
 
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 6;
 
     const indexOfLast = currentPage * reviewsPerPage;
     const indexOfFirst = indexOfLast - reviewsPerPage;
-    const currentReviews = user.reviews.slice(indexOfFirst, indexOfLast);
-    const totalPages = Math.ceil(user.reviews.length / reviewsPerPage);
+    const currentReviews = reviews.slice(indexOfFirst, indexOfLast);
+    const totalPages = Math.ceil(reviews.length / reviewsPerPage);
 
     return (
         <section className="max-w-4xl mx-auto px-4 py-10">
@@ -40,14 +56,14 @@ export default function MyProfile() {
             <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
                 {/* Avatar */}
                 <div className="w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center text-4xl font-bold text-[#E9762B]">
-                    {user.name[0]}
+                    {name[0]}
                 </div>
 
                 {/* Info */}
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-[#E9762B]">{user.name}</h1>
-                    <p className="text-sm text-gray-600">{user.email}</p>
-                    <p className="text-sm text-gray-400">Joined: {new Date(user.joinedAt).toLocaleDateString()}</p>
+                    <h1 className="text-2xl font-bold text-[#E9762B]">{name}</h1>
+                    <p className="text-sm text-gray-600">{email}</p>
+                    <p className="text-sm text-gray-400">Joined: {new Date(_createdOn).toLocaleDateString()}</p>
                 </div>
 
                 {/* Buttons */}
@@ -71,7 +87,7 @@ export default function MyProfile() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-center">
                 <div className="bg-white border rounded-lg p-4 shadow-sm">
                     <p className="text-sm text-gray-500">Reviews</p>
-                    <p className="text-xl font-semibold text-[#E9762B]">{user.reviews.length}</p>
+                    <p className="text-xl font-semibold text-[#E9762B]">{reviews.length}</p>
                 </div>
                 <div className="bg-white border rounded-lg p-4 shadow-sm col-span-2 md:col-span-1">
                     <p className="text-sm text-gray-500">Average Rating</p>
@@ -89,13 +105,13 @@ export default function MyProfile() {
                 <h2 className="text-lg font-semibold text-[#E9762B] mb-4">My Reviews</h2>
                 <div className="space-y-4">
                     {currentReviews.map((rev, i) => (
-                        <div key={i} className="bg-white border p-4 rounded-lg shadow-sm">
+                        <Link to={`/restaurants/${rev.restaurantId}/details`} key={i} className="block bg-white border p-4 rounded-lg shadow-sm hover:shadow-md transition">
                             <div className="flex justify-between items-center mb-1">
-                                <h3 className="font-medium text-gray-800">{rev.restaurant}</h3>
+                                <h3 className="font-medium text-gray-800">{rev.restaurantName}</h3>
                                 <StarRatingDisplay rating={rev.rating} size={18} />
                             </div>
                             <p className="text-sm text-gray-700">{rev.comment}</p>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 
