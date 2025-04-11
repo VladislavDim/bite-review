@@ -17,3 +17,10 @@ export const useGetReviewsByRestaurantId = () => {
     };
     return { getAll };
 };
+
+export const useGetAllReviews = () => {
+    const getAll = async () => {
+        return request.get(`${baseUrl}`);
+    };
+    return { getAll };
+};
