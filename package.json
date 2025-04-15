@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "RESTful API for the BiteReview platform – managing users, restaurants, reviews, and cities using Node.js, Express, and MongoDB.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
@@ -20,7 +21,8 @@
   "homepage": "https://github.com/VladislavDim/bite-review-backend#readme",
   "dependencies": {
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
