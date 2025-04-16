@@ -1,20 +1,27 @@
 import mongoose from 'mongoose';
 
-const citySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
+const citySchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+        },
+        country: {
+            type: String,
+            default: 'Bulgaria',
+            trim: true,
+        },
+        postalCode: {
+            type: String,
+            trim: true,
+        },
     },
-    country: {
-        type: String,
-        default: 'Bulgaria',
-        trim: true,
-    },
-}, {
-    timestamps: true
-});
+    {
+        timestamps: true,
+    }
+);
 
 const City = mongoose.model('City', citySchema);
 
