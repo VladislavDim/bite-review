@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import connectDB from './config/db.js';
 import cityRoutes from './routes/city.routes.js';
+import userRoutes from './routes/user.routes.js';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ connectDB();
 app.use(express.json());
 
 app.use('/api/cities', cityRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('BiteReview API is running!');
