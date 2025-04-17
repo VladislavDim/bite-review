@@ -15,6 +15,23 @@ export const getAllRestaurants = async (req, res) => {
     }
 };
 
+export const getRestaurantById = async (req, res) => {
+    try {
+        const restaurant = await Restaurant.findById(req.params.id)
+            .populate('city', 'name')
+            .populate('owner', 'username');
+
+        if (!restaurant) {
+            return res.status(404).json({ message: 'Restaurant not found' });
+        }
+
+        res.json(restaurant);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch restaurant' });
+    }
+};
+
+
 /**
  * POST /api/restaurants
  * Creates a new restaurant
