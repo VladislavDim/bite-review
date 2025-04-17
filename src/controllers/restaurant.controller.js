@@ -15,6 +15,10 @@ export const getAllRestaurants = async (req, res) => {
     }
 };
 
+/**
+ * GET /api/restaurants/:id
+ * Returns restaurant with current id
+ */
 export const getRestaurantById = async (req, res) => {
     try {
         const restaurant = await Restaurant.findById(req.params.id)
@@ -29,6 +33,19 @@ export const getRestaurantById = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch restaurant' });
     }
+};
+
+/**
+ * POST /api/restaurants/upload
+ * Upload restaurant image and return imageUrl
+ */
+export const uploadRestaurantImage = (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
+    res.status(201).json({ imageUrl });
 };
 
 
