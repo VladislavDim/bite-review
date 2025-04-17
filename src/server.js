@@ -5,6 +5,7 @@ import cityRoutes from './routes/city.routes.js';
 import userRoutes from './routes/user.routes.js';
 import restaurantRoutes from './routes/restaurant.routes.js';
 import paths from './utils/paths.js';
+import reviewRoutes from './routes/review.routes.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use('/uploads', express.static(paths.uploads));
 app.use('/api/cities', cityRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.get('/', (req, res) => {
   res.send('BiteReview API is running!');
