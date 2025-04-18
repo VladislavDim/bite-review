@@ -1,4 +1,5 @@
 import express from 'express';
+
 import {
     getAllRestaurants,
     createRestaurant,
@@ -6,14 +7,15 @@ import {
     uploadRestaurantImage,
     updateRestaurant,
     deleteRestaurant,
-}
-    from '../controllers/restaurant.controller.js';
+} from '../controllers/restaurant.controller.js';
+
+import authMiddleware from '../middlewares/auth.middleware.js';
 import upload from '../middlewares/upload.middleware.js';
 
 const router = express.Router();
 
 router.get('/', getAllRestaurants);
-router.post('/', createRestaurant);
+router.post('/', authMiddleware, createRestaurant);
 router.get('/:id', getRestaurantById);
 router.put('/:id', updateRestaurant);
 router.delete('/:id', deleteRestaurant);
