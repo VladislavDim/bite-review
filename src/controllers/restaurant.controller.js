@@ -59,7 +59,6 @@ export const createRestaurant = async (req, res) => {
             description,
             location,
             city,
-            owner,
             imageUrl,
             features,
         } = req.body;
@@ -69,7 +68,7 @@ export const createRestaurant = async (req, res) => {
             description,
             location,
             city,
-            owner,
+            owner: req.user._id, 
             imageUrl,
             features,
         });
