@@ -12,7 +12,8 @@ export const registerUser = async ({ username, email, password }) => {
         throw new Error('A user with this email already exists!');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await User.create({
         username,
