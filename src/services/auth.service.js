@@ -1,5 +1,4 @@
 import User from '../models/user.model.js';
-import bcrypt from 'bcryptjs';
 
 /**
  * POST /api/auth/register
@@ -12,13 +11,10 @@ export const registerUser = async ({ username, email, password }) => {
         throw new Error('A user with this email already exists!');
     }
 
-    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
     const newUser = await User.create({
         username,
         email,
-        password: hashedPassword,
+        password
     });
 
     return {
