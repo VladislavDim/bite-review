@@ -1,4 +1,5 @@
 import Restaurant from '../models/restaurant.model.js';
+import * as restaurantService from '../services/restaurant.service.js';
 
 /**
  * GET /api/restaurants
@@ -6,9 +7,7 @@ import Restaurant from '../models/restaurant.model.js';
  */
 export const getAllRestaurants = async (req, res) => {
     try {
-        const restaurants = await Restaurant.find()
-            .populate('city', 'name')
-            .populate('owner', 'username');
+        const restaurants = await restaurantService.getAllRestaurants();
         res.json(restaurants);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch restaurants' });
@@ -68,7 +67,7 @@ export const createRestaurant = async (req, res) => {
             description,
             location,
             city,
-            owner: req.user._id, 
+            owner: req.user._id,
             imageUrl,
             features,
         });
