@@ -20,9 +20,7 @@ export const getAllRestaurants = async (req, res) => {
  */
 export const getRestaurantById = async (req, res) => {
     try {
-        const restaurant = await Restaurant.findById(req.params.id)
-            .populate('city', 'name')
-            .populate('owner', 'username');
+        const restaurant = await restaurantService.getRestaurantById(req.params.id);
 
         if (!restaurant) {
             return res.status(404).json({ message: 'Restaurant not found' });
