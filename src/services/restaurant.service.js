@@ -23,3 +23,30 @@ export const getRestaurantById = async (id) => {
 
     return restaurant;
 };
+
+/**
+ * POST /api/restaurants
+ * Creates a new restaurant
+ */
+export const createRestaurant = async (data, userId) => {
+    const {
+        name,
+        description,
+        location,
+        city,
+        imageUrl,
+        features,
+    } = data;
+
+    const newRestaurant = await Restaurant.create({
+        name,
+        description,
+        location,
+        city,
+        owner: userId,
+        imageUrl,
+        features,
+    });
+
+    return newRestaurant;
+};

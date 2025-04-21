@@ -10,7 +10,7 @@ export const getAllRestaurants = async (req, res) => {
         const restaurants = await restaurantService.getAllRestaurants();
         res.json(restaurants);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch restaurants' });
+        res.status(500).json({ message: 'Failed to fetch restaurants', error: err.message });
     }
 };
 
@@ -28,7 +28,7 @@ export const getRestaurantById = async (req, res) => {
 
         res.json(restaurant);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch restaurant' });
+        res.status(500).json({ message: 'Failed to fetch restaurant', error: err.message });
     }
 };
 
@@ -51,28 +51,10 @@ export const uploadRestaurantImage = (req, res) => {
  */
 export const createRestaurant = async (req, res) => {
     try {
-        const {
-            name,
-            description,
-            location,
-            city,
-            imageUrl,
-            features,
-        } = req.body;
-
-        const newRestaurant = await Restaurant.create({
-            name,
-            description,
-            location,
-            city,
-            owner: req.user._id,
-            imageUrl,
-            features,
-        });
-
+        const newRestaurant = await restaurantService.createRestaurant(req.body, req.user._id);
         res.status(201).json(newRestaurant);
     } catch (error) {
-        res.status(400).json({ message: 'Failed to create restaurant' });
+        res.status(400).json({ message: 'Failed to create restaurant', error: err.message });
     }
 };
 
