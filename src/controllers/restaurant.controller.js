@@ -64,19 +64,15 @@ export const createRestaurant = async (req, res) => {
  */
 export const updateRestaurant = async (req, res) => {
     try {
-        const updated = await Restaurant.findByIdAndUpdate(
+        const updated = await restaurantService.updateRestaurant(
             req.params.id,
             req.body,
-            { new: true, runValidators: true }
+            req.user._id
         );
-
-        if (!updated) {
-            return res.status(404).json({ message: 'Restaurant not found' });
-        }
 
         res.json(updated);
     } catch (error) {
-        res.status(400).json({ message: 'Failed to update restaurant' });
+        res.status(400).json({ message: 'Failed to update restaurant', error: err.message });
     }
 };
 

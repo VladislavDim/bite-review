@@ -50,3 +50,25 @@ export const createRestaurant = async (data, userId) => {
 
     return newRestaurant;
 };
+
+/**
+ * PUT /api/restaurants/:id
+ * Updates restaurant if the user is the owner
+ */
+export const updateRestaurant = async (restaurantId, data, userId) => {
+    const restaurant = await Restaurant.findById(restaurantId);
+
+    if (!restaurant) {
+        throw new Error('Restaurant not found');
+    }
+
+    // Check if current user is the owner
+    if (restaurant.owner.toString() !== userId.toString()) {
+        throw new Error('Not authorized to update this restaurant');
+    }
+
+    Object.assign(restaurant, data); // merge new data
+    await restaurant.save();
+
+    return restaurant;
+};
