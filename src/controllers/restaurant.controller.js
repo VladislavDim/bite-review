@@ -82,14 +82,13 @@ export const updateRestaurant = async (req, res) => {
  */
 export const deleteRestaurant = async (req, res) => {
     try {
-        const deleted = await Restaurant.findByIdAndDelete(req.params.id);
+        const deleted = await restaurantService.deleteRestaurant(
+            req.params.id,
+            req.user._id
+        );
 
-        if (!deleted) {
-            return res.status(404).json({ message: 'Restaurant not found' });
-        }
-
-        res.json({ message: 'Restaurant deleted successfully' });
+        res.json({ deleted, message: 'Restaurant deleted successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to delete restaurant' });
+        res.status(500).json({ message: 'Failed to delete restaurant', error: err.message, });
     }
 };

@@ -72,3 +72,22 @@ export const updateRestaurant = async (restaurantId, data, userId) => {
 
     return restaurant;
 };
+
+/**
+ * DELETE /api/restaurants/:id
+ * Deletes a restaurant if the user is the owner
+ */
+export const deleteRestaurant = async (restaurantId, userId) => {
+    const restaurant = await Restaurant.findById(restaurantId);
+
+    if (!restaurant) {
+        throw new Error('Restaurant not found');
+    }
+
+    if (restaurant.owner.toString() !== userId.toString()) {
+        throw new Error('Not authorized to delete this restaurant');
+    }
+
+    await restaurant.deleteOne();
+    return restaurant;
+};
