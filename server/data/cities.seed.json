@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Sofia",
+        "country": "Bulgaria",
+        "postalCode": "1000"
+    },
+    {
+        "name": "Plovdiv",
+        "country": "Bulgaria",
+        "postalCode": "4000"
+    },
+    {
+        "name": "Varna",
+        "country": "Bulgaria",
+        "postalCode": "9000"
+    },
+    {
+        "name": "Burgas",
+        "country": "Bulgaria",
+        "postalCode": "8000"
+    },
+    {
+        "name": "Ruse",
+        "country": "Bulgaria",
+        "postalCode": "7000"
+    },
+    {
+        "name": "Stara Zagora",
+        "country": "Bulgaria",
+        "postalCode": "6000"
+    },
+    {
+        "name": "Pleven",
+        "country": "Bulgaria",
+        "postalCode": "5800"
+    },
+    {
+        "name": "Sliven",
+        "country": "Bulgaria",
+        "postalCode": "8800"
+    },
+    {
+        "name": "Dobrich",
+        "country": "Bulgaria",
+        "postalCode": "9300"
+    },
+    {
+        "name": "Shumen",
+        "country": "Bulgaria",
+        "postalCode": "9700"
+    }
+]
