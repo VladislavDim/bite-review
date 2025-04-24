@@ -3,7 +3,7 @@ import { useContext } from "react";
 import request from "../utils/request"
 import { UserContext } from "../contexts/UserContext";
 
-const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/users`;
+const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/auth`;
 
 export const useLogin = () => {
     const login = async (email, password) =>
@@ -36,7 +36,7 @@ export const useLogout = () => {
         try {
             await request.get(`${baseUrl}/logout`, null, {
                 headers: {
-                    'X-Authorization': accessToken,
+                    Authorization: `Bearer ${accessToken}`,
                 },
             });
         } catch (err) {
