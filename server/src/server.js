@@ -7,6 +7,7 @@ import restaurantRoutes from './routes/restaurant.routes.js';
 import paths from './utils/paths.js';
 import reviewRoutes from './routes/review.routes.js';
 import authRoutes from './routes/auth.routes.js';
+import corsMiddleware from './middlewares/cors.middleware.js';
 
 dotenv.config();
 
@@ -15,8 +16,8 @@ const PORT = process.env.PORT || 5000;
 
 connectDB();
 
+app.use(corsMiddleware);
 app.use(express.json());
-
 app.use('/uploads', express.static(paths.uploads));
 app.use('/api/cities', cityRoutes);
 app.use('/api/users', userRoutes);
