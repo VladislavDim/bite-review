@@ -1,24 +1,38 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaUserEdit, FaSignOutAlt } from "react-icons/fa";
-import StarRatingDisplay from "../components/ui/StarRatingDisplay";
 import { useNavigate, Link } from "react-router";
-import { UserContext } from "../contexts/UserContext";
+import { useUserContext } from "../contexts/UserContext";
+import { useGetUserById } from "../api/userApi";
 import { useGetAllReviews } from "../api/reviewApi";
 import { useGetAllRestaurants } from "../api/restaurantApi";
+import StarRatingDisplay from "../components/ui/StarRatingDisplay";
 
 export default function MyProfile() {
     const navigate = useNavigate();
-    const { _id: userId, name, email, _createdOn } = useContext(UserContext);
+    const { _id: userId } = useUserContext();
+    const { getUser } = useGetUserById();
     const { getAll: getAllReviews } = useGetAllReviews();
     const { restaurants } = useGetAllRestaurants();
 
+    const [profile, setProfile] = useState(null);
     const [reviewsReceived, setReviewsReceived] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const reviewsPerPage = 6;
 
     useEffect(() => {
-        const fetchReceivedReviews = async () => {
+        if (!userId || !restaurants.length) {
+            return;
+        }
+
+        const fetchProfileAndReviews = async () => {
             try {
+                const fetchedProfile = await getUser(userId);
+                setProfile(fetchedProfile);
+                
                 const allReviews = await getAllReviews();
-                const myRestaurants = restaurants.filter(r => r._ownerId === userId);
+                const myRestaurants = restaurants.filter(r => r.ownerId?._id === userId);
                 const myRestaurantIds = myRestaurants.map(r => r._id);
 
                 const received = allReviews
@@ -33,26 +47,32 @@ export default function MyProfile() {
                     });
 
                 setReviewsReceived(received);
-            } catch (err) {
-                console.error("Failed to load reviews:", err);
+            } catch (error) {
+                console.error('Failed to fetch profile or reviews:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchReceivedReviews();
+        fetchProfileAndReviews();
     }, [userId, restaurants]);
 
-    const averageRating =
-        reviewsReceived.length > 0
-            ? reviewsReceived.reduce((sum, r) => sum + r.rating, 0) / reviewsReceived.length
-            : 0;
+    if (loading) {
+        return <p className="text-center text-gray-500 py-10">Loading profile...</p>;
+    }
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const reviewsPerPage = 6;
+    if (!profile) {
+        return <p className="text-center text-red-500 py-10">Profile could not be loaded.</p>;
+    }
 
     const indexOfLast = currentPage * reviewsPerPage;
     const indexOfFirst = indexOfLast - reviewsPerPage;
     const currentReviews = reviewsReceived.slice(indexOfFirst, indexOfLast);
     const totalPages = Math.ceil(reviewsReceived.length / reviewsPerPage);
+
+    const averageRating = reviewsReceived.length
+        ? reviewsReceived.reduce((sum, r) => sum + r.rating, 0) / reviewsReceived.length
+        : 0;
 
     return (
         <section className="max-w-4xl mx-auto px-4 py-10">
@@ -60,14 +80,16 @@ export default function MyProfile() {
             <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
                 {/* Avatar */}
                 <div className="w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center text-4xl font-bold text-[#E9762B]">
-                    {name?.[0] || "?"}
+                    {profile.username?.[0] || "?"}
                 </div>
 
                 {/* Info */}
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-[#E9762B]">{name}</h1>
-                    <p className="text-sm text-gray-600">{email}</p>
-                    <p className="text-sm text-gray-400">Joined: {new Date(_createdOn).toLocaleDateString()}</p>
+                    <h1 className="text-2xl font-bold text-[#E9762B]">{profile.username}</h1>
+                    <p className="text-sm text-gray-600">{profile.email}</p>
+                    <p className="text-sm text-gray-400">
+                        Joined: {new Date(profile.createdAt).toLocaleDateString()}
+                    </p>
                 </div>
 
                 {/* Buttons */}
@@ -129,8 +151,7 @@ export default function MyProfile() {
                         <button
                             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                             disabled={currentPage === 1}
-                            className="px-4 py-1 border rounded text-sm text-[#E9762B] border-[#E9762B] 
-                                       hover:bg-[#E9762B] hover:text-white transition disabled:opacity-50"
+                            className="px-4 py-1 border rounded text-sm text-[#E9762B] border-[#E9762B] hover:bg-[#E9762B] hover:text-white transition disabled:opacity-50"
                         >
                             Previous
                         </button>
@@ -142,8 +163,7 @@ export default function MyProfile() {
                         <button
                             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                             disabled={currentPage === totalPages}
-                            className="px-4 py-1 border rounded text-sm text-[#E9762B] border-[#E9762B] 
-                                       hover:bg-[#E9762B] hover:text-white transition disabled:opacity-50"
+                            className="px-4 py-1 border rounded text-sm text-[#E9762B] border-[#E9762B] hover:bg-[#E9762B] hover:text-white transition disabled:opacity-50"
                         >
                             Next
                         </button>
