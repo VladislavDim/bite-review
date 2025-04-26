@@ -47,3 +47,19 @@ export const getReviewsByRestaurant = async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch reviews' });
     }
 };
+
+/**
+ * GET /api/reviews
+ * Returns all reviews
+ */
+export const getAllReviews = async (req, res) => {
+    try {
+        const reviews = await Review.find()
+            .populate('user', 'username')
+            .sort({ createdAt: -1 });
+
+        res.json(reviews);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch reviews' });
+    }
+};
