@@ -6,7 +6,7 @@ import { FaUser, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 
 export default function Header() {
     const location = useLocation();
-    const { name, email } = useUserContext();
+    const { username, email } = useUserContext();
 
     const isLoggedIn = !!email; // или !!accessToken ако използваш такъв
     const isActive = (path) => location.pathname === path;
@@ -51,7 +51,7 @@ export default function Header() {
                                     className={`nav-link flex items-center gap-2 hover:no-underline ${isActive('/profile') ? 'active' : ''}`}
                                 >
                                     <FaUser />
-                                    <span>{name ? ` ${name}` : ''}</span>
+                                    <span>{username ? ` ${username}` : ''}</span>
                                 </Link>
                             </li>
                         )}
