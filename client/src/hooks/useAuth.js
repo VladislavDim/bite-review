@@ -3,7 +3,7 @@ import { UserContext } from "../contexts/UserContext";
 import request from "../utils/request";
 
 export default function useAuth() {
-    const { accessToken, ...authData } = useContext(UserContext);
+    const { token: accessToken, ...authData } = useContext(UserContext);
 
     const requestWrapper = useCallback((method, url, data, options = {}) => {
         const authOptions = {
