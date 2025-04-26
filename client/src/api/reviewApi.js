@@ -1,5 +1,5 @@
 import request from "../utils/request";
-const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/data/reviews`;
+const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/reviews`;
 
 export const useCreateReview = () => {
     const create = async (reviewData, token) => {
@@ -24,3 +24,4 @@ export const useGetAllReviews = () => {
     };
     return { getAll };
 };
+
