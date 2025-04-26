@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import request from "../utils/request";
 import { UserContext } from "../contexts/UserContext";
 
-const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/data/restaurants`;
+const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/restaurants`;
 
 export const useCreateRestaurant = () => {
     const { accessToken } = useContext(UserContext);
