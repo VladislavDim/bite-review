@@ -1,53 +1,83 @@
-# 🍽️ BiteReview – Full Stack Application
+# 🍽️ BiteReview – Full Stack Restaurant Review Platform
 
 ![React](https://img.shields.io/badge/Frontend-React-blue)
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
 ![Express](https://img.shields.io/badge/API-Express-lightgrey)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen)
 
-**BiteReview** is a modern restaurant review platform where users can browse, review, and manage restaurants. Built with a full-stack architecture using React.js for the frontend and Node.js with MongoDB for the backend.
+---
+
+**BiteReview** is a modern, full-stack web application built with the MERN stack, offering a complete solution for discovering, reviewing, and managing restaurants. It delivers a seamless experience for users and restaurant owners alike, ensuring real-time feedback and interaction.
 
 ---
 
 ## 📁 Project Structure
 
-```
+```bash
 bite-review/
 ├── client/         # React frontend application
-├── server/         # Node.js + Express backend with MongoDB
+│   └── src/
+│       ├── api/        # API service handlers
+│       ├── assets/     # Static files (images, etc.)
+│       ├── components/ # Reusable UI components
+│       ├── contexts/   # React Context API setup
+│       ├── guards/     # Route guards (e.g., protected routes)
+│       ├── hooks/      # Custom React hooks
+│       ├── pages/      # Application pages
+│       ├── providers/  # Context providers
+│       └── utils/      # Utility functions
+├── server/         # Node.js + Express backend
+│   └── src/
+│       ├── config/     # Configuration files
+│       ├── controllers/# Request handlers
+│       ├── middlewares/# Express middlewares
+│       ├── models/     # Mongoose models
+│       ├── routes/     # API routes
+│       ├── services/   # Business logic
+│       └── utils/      # Helper utilities
 ```
 
 ---
 
-## 🧠 Key Features
+## 🧐 Key Features
 
-### 👨‍🍳 For Restaurant Owners
-- Add, edit, and delete restaurants
-- View reviews left by users
-- Cannot review their own restaurants
+### 👨‍🍳 Restaurant Owners
+- Add, edit, and delete restaurants securely.
+- View and manage customer reviews and ratings.
+- Protected against self-reviewing for fairness.
 
-### 👤 For Registered Users
-- Explore restaurant listings
-- Leave reviews and ratings
-- Like and reply to other reviews
-- Filter and sort restaurants
+### 👤 Registered Users
+- Explore and filter restaurant listings.
+- Leave detailed reviews and 1-5 star ratings.
+- Like, reply, and interact with other reviews (recursive nesting).
+- Manage personal profiles, including edit capabilities.
 
-### 🌐 For Guests
-- Browse public listings
-- View reviews and restaurant details
+### 🌐 Guests
+- Browse restaurants and view public reviews.
+- Read restaurant details without authentication.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React.js, React Router, TailwindCSS, Axios
-- **Backend**: Node.js, Express.js, MongoDB, Mongoose
-- **Auth**: JWT Authentication with role-based access control
-- **Utilities**: Multer (image upload), UUID, CORS
+- **Frontend:** React.js, Vite, TailwindCSS, React Router DOM
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB, Mongoose
+- **Authentication:** JWT (with token blacklist for secure logout)
+- **Other Tools:**
+  - Multer (for handling image uploads)
+  - UUID (for unique identifiers)
+  - CORS (Cross-Origin Resource Sharing)
 
 ---
 
-## 🚀 How to Run Locally
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js >= 18.x
+- MongoDB Atlas account or local MongoDB server
+
+### Installation
 
 ```bash
 # 1. Clone the repository
@@ -65,21 +95,47 @@ npm install
 npm run dev
 ```
 
+### Environment Variables
+Create a `.env` file inside the `server/` directory:
+```bash
+MONGO_URI=your_mongo_connection_string
+JWT_SECRET=your_secret_key
+JWT_EXPIRES_IN=2d
+PORT=5000
+CLIENT_URL=http://localhost:5173
+```
+
+> Ensure MongoDB and the backend server are running before starting the frontend.
+
 ---
 
-## 💡 Planned Improvements
+## 💡 Future Enhancements
 
-- ✅ Image gallery for restaurants
-- ✅ Recursive replies to reviews
-- ✅ Review rating system (like/dislike)
-- ✅ Pagination and sorting
-- ✅ Profile avatars and bios
-- ✅ Reviewer level system
-- ✅ Admin panel
+- ✅ Advanced search and filtering with multi-criteria
+- ✅ Admin dashboard for restaurant owners
+- ✅ Real-time notifications for new reviews
+- ✅ Multi-image upload and gallery view
+- ✅ Reviewer trust-level/ranking system
+- ✅ Enhanced mobile-first UX
+- ✅ Deployment on Vercel / Render / Railway
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License**.  
-You are free to use, modify, and distribute it for personal or commercial use.
+This project is licensed under the **MIT License**.
+
+> Open for personal or commercial use. Contributions are welcome!
+
+---
+
+## 📙 Contact
+
+For feedback, suggestions, or collaboration:
+
+- GitHub: [yourusername](https://github.com/yourusername)
+- Email: your.email@example.com
+
+---
+
+_"Discover, review, and connect — with BiteReview."_
