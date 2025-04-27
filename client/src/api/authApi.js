@@ -34,7 +34,7 @@ export const useLogout = () => {
         if (!accessToken) return;
 
         try {
-            await request.get(`${baseUrl}/logout`, null, {
+            await request.post(`${baseUrl}/logout`, null, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
