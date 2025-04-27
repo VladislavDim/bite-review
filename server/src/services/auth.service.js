@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 import User from '../models/user.model.js';
+import BlacklistedToken from '../models/blacklistedToken.model.js';
 
 /**
  * POST /api/auth/register
@@ -56,4 +57,28 @@ export const loginUser = async ({ email, password }) => {
         email: user.email,
         token,
     };
+};
+
+/**
+ * POST /api/auth/logout
+ * Logs out a user by blacklisting their JWT token
+ */
+export const logoutUser = async (token) => {
+    const decoded = jwt.decode(token);
+
+    if (!decoded || !decoded.exp) {
+        throw new Error('Invalid token');
+    }
+
+    await BlacklistedToken.create({
+        token,
+        expiresAt: new Date(decoded.exp * 1000), // от секунди към милисекунди
+    });
+};
+
+/**
+ * Utility: Checks if a token is blacklisted
+ */
+export const isTokenBlacklisted = async (token) => {
+    return await BlacklistedToken.findOne({ token });
 };
