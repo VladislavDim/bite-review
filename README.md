@@ -1,5 +1,10 @@
 # 🍽️ BiteReview – Full Stack Application
 
+![React](https://img.shields.io/badge/Frontend-React-blue)
+![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
+![Express](https://img.shields.io/badge/API-Express-lightgrey)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen)
+
 **BiteReview** is a modern restaurant review platform where users can browse, review, and manage restaurants. Built with a full-stack architecture using React.js for the frontend and Node.js with MongoDB for the backend.
 
 ---
