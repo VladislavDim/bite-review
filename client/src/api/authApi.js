@@ -27,7 +27,7 @@ export const useRegister = () => {
 };
 
 export const useLogout = () => {
-    const { accessToken, userLogoutHandler } = useContext(UserContext);
+    const { token: accessToken, userLogoutHandler } = useContext(UserContext);
     const [isLoggedOut, setIsLoggedOut] = useState(false);
 
     const logout = useCallback(async () => {
