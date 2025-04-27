@@ -133,8 +133,8 @@ This project is licensed under the **MIT License**.
 
 For feedback, suggestions, or collaboration:
 
-- GitHub: [yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+- GitHub: [VladislavDim](https://github.com/VladislavDim)
+- Email: vladislavdimitrov506@gmail.com
 
 ---
 
