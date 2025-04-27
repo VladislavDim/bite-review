@@ -72,13 +72,6 @@ export const logoutUser = async (token) => {
 
     await BlacklistedToken.create({
         token,
-        expiresAt: new Date(decoded.exp * 1000), // от секунди към милисекунди
+        expiresAt: new Date(decoded.exp * 1000),
     });
-};
-
-/**
- * Utility: Checks if a token is blacklisted
- */
-export const isTokenBlacklisted = async (token) => {
-    return await BlacklistedToken.findOne({ token });
 };
