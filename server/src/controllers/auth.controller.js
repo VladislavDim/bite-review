@@ -1,5 +1,4 @@
-import { registerUser, loginUser } from '../services/auth.service.js';
-import { blacklistToken } from '../services/tokenBlacklist.service.js';
+import { registerUser, loginUser, logoutUser } from '../services/auth.service.js';
 
 /**
  * POST /api/auth/register
@@ -39,13 +38,7 @@ export const logout = async (req, res) => {
     }
 
     try {
-        const decoded = jwt.decode(token);
-
-        if (!decoded || !decoded.exp) {
-            return res.status(400).json({ message: 'Invalid token' });
-        }
-
-        await blacklistToken(token, new Date(decoded.exp * 1000));
+        await logoutUser(token);
 
         res.json({ message: 'Successfully logged out' });
     } catch (error) {
