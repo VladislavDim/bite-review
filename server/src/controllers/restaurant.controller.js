@@ -49,11 +49,32 @@ export const uploadRestaurantImage = (req, res) => {
  * Creates a new restaurant
  */
 export const createRestaurant = async (req, res) => {
+    const { name, location, city, description, features } = req.body;
+
+    if (!name || !location || !city || !description) {
+        return res.status(400).json({ message: 'Name, location, city, and description are required.' });
+    }
+
     try {
-        const newRestaurant = await restaurantService.createRestaurant(req.body, req.user._id);
+        const restaurantData = {
+            name,
+            location,
+            city,
+            description,
+            features,
+            images: [], 
+        };
+
+        if (req.file) {
+            restaurantData.images.push(`/uploads/${req.file.filename}`);
+        }
+
+        const newRestaurant = await createRestaurant(restaurantData, req.user._id);
+
         res.status(201).json(newRestaurant);
     } catch (error) {
-        res.status(400).json({ message: 'Failed to create restaurant', errorMessage: error.message });
+        console.error('Failed to create restaurant:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
