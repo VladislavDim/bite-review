@@ -9,10 +9,12 @@ const restaurantSchema = new mongoose.Schema(
         },
         description: {
             type: String,
+            required: true,
             trim: true,
         },
         location: {
             type: String,
+            required: true,
             trim: true,
         },
         city: {
@@ -24,10 +26,13 @@ const restaurantSchema = new mongoose.Schema(
             ref: 'User',
             required: true,
         },
-        imageUrl: {
-            type: String,
-            trim: true,
-        },
+        images: [
+            {
+                type: String,
+                required: true,
+                trim: true,
+            }
+        ],
         features: [
             {
                 type: String,
