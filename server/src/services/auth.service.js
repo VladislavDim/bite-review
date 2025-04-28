@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 
 import User from '../models/user.model.js';
 import BlacklistedToken from '../models/blacklistedToken.model.js';
+import { generateToken } from '../utils/jwt.js';
 
 /**
  * POST /api/auth/register
@@ -21,10 +22,13 @@ export const registerUser = async ({ username, email, password }) => {
         password
     });
 
+    const token = generateToken(newUser); 
+
     return {
         _id: newUser._id,
         username: newUser.username,
         email: newUser.email,
+        token
     };
 };
 
@@ -45,11 +49,7 @@ export const loginUser = async ({ email, password }) => {
         throw new Error('Invalid email or password');
     }
 
-    const token = jwt.sign(
-        { _id: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '2d' }
-    );
+    const token = generateToken(user);
 
     return {
         _id: user._id,
