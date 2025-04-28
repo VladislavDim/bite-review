@@ -34,8 +34,8 @@ export const createRestaurant = async (data, userId) => {
         description,
         location,
         city,
-        imageUrl,
         features,
+        images,
     } = data;
 
     const newRestaurant = await Restaurant.create({
@@ -44,7 +44,7 @@ export const createRestaurant = async (data, userId) => {
         location,
         city,
         owner: userId,
-        imageUrl,
+        images: images || [],
         features,
     });
 
