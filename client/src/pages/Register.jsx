@@ -13,7 +13,7 @@ export default function Register() {
     const { userLoginHandler } = useContext(UserContext);
 
     const [formState, setFormState] = useState({
-        name: "",
+        username: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -33,7 +33,7 @@ export default function Register() {
         e.preventDefault();
         const validationErrors = {};
 
-        if (!formState.name.trim()) validationErrors.name = "Name is required.";
+        if (!formState.username.trim()) validationErrors.username = "Username is required.";
         if (!formState.email.trim()) validationErrors.email = "Email is required.";
         if (!formState.password.trim()) validationErrors.password = "Password is required.";
         if (formState.password !== formState.confirmPassword) validationErrors.confirmPassword = "Passwords do not match.";
@@ -45,7 +45,7 @@ export default function Register() {
 
         try {
             setIsPending(true);
-            const authData = await register(formState.name, formState.email, formState.password);
+            const authData = await register(formState.username, formState.email, formState.password);
             userLoginHandler(authData);
             navigate("/restaurants");
         } catch (err) {
@@ -75,14 +75,14 @@ export default function Register() {
 
                     <form onSubmit={handleSubmit} className="flex-1 mt-6 mb-6 flex flex-col justify-center space-y-6" noValidate>
                         <TextInput
-                            id="name"
-                            name="name"
+                            id="username"
+                            name="username"
                             type="text"
-                            label="Name"
+                            label="Username"
                             placeholder="John Doe"
-                            value={formState.name}
+                            value={formState.username}
                             onChange={handleChange}
-                            error={errors.name}
+                            error={errors.username}
                         />
 
                         <TextInput
