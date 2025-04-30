@@ -1,4 +1,5 @@
 import * as restaurantService from '../services/restaurant.service.js';
+import fs from 'fs/promises';
 
 /**
  * GET /api/restaurants
@@ -32,16 +33,38 @@ export const getById = async (req, res) => {
 };
 
 /**
- * POST /api/restaurants/upload
- * Upload restaurant image and return imageUrl
+ * PATCH /api/restaurants/:id/upload-image
+ * Uploads an image for a specific restaurant
  */
 export const uploadImage = async (req, res) => {
+    const { id } = req.params;
+
     if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
+        return res.status(400).json({ message: 'No image file provided.' });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
-    res.status(201).json({ imageUrl });
+    try {
+        const restaurant = await restaurantService.getRestaurantById(id);
+
+        if (!restaurant) {
+            await fs.unlink(`uploads/${req.file.filename}`);
+            return res.status(404).json({ message: 'Restaurant not found.' });
+        }
+
+        const imagePath = `/uploads/${req.file.filename}`;
+
+        const updatedRestaurant = await restaurantService.updateImage(id, imagePath);
+
+        res.status(200).json(updatedRestaurant);
+    } catch (error) {
+        console.error('Failed to upload restaurant image:', error);
+
+        if (req.file) {
+            await fs.unlink(`uploads/${req.file.filename}`);
+        }
+
+        res.status(500).json({ message: 'Internal server error' });
+    }
 };
 
 /**
@@ -62,14 +85,10 @@ export const create = async (req, res) => {
             city,
             description,
             features,
-            images: [], 
+            images: [],
         };
 
-        if (req.file) {
-            restaurantData.images.push(`/uploads/${req.file.filename}`);
-        }
-
-        const newRestaurant = await createRestaurant(restaurantData, req.user._id);
+        const newRestaurant = await restaurantService.createRestaurant(restaurantData, req.user._id);
 
         res.status(201).json(newRestaurant);
     } catch (error) {
