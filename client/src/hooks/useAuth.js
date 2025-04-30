@@ -9,7 +9,7 @@ export default function useAuth() {
         const authOptions = {
             ...options,
             headers: {
-                'X-Authorization': accessToken,
+                'Authorization': `Bearer ${accessToken}`,
                 ...options.headers
             }
         };
@@ -21,6 +21,7 @@ export default function useAuth() {
         get: requestWrapper.bind(null, 'GET'),
         post: requestWrapper.bind(null, 'POST'),
         put: requestWrapper.bind(null, 'PUT'),
+        patch: requestWrapper.bind(null, 'PATCH'),
         delete: requestWrapper.bind(null, 'DELETE'),
     }), [requestWrapper])
 
