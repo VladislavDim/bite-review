@@ -91,3 +91,15 @@ export const deleteRestaurant = async (restaurantId, userId) => {
     await restaurant.deleteOne();
     return restaurant;
 };
+
+/**
+ * PATCH /api/restaurants/:id/upload-image
+ * Adds a new image path to the restaurant's images array
+ */
+export const updateImage = async (id, imagePath) => {
+    return await Restaurant.findByIdAndUpdate(
+        id,
+        { $push: { images: imagePath } },
+        { new: true }
+    );
+};
