@@ -1,22 +1,37 @@
 import { useContext, useEffect, useState } from "react";
 import request from "../utils/request";
 import { UserContext } from "../contexts/UserContext";
+import useAuth from "../hooks/useAuth";
 
 const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/restaurants`;
 
 export const useCreateRestaurant = () => {
-    const { accessToken } = useContext(UserContext);
+    const { request } = useAuth();
 
     const createRestaurant = async (restaurantData) => {
-        return request.post(`${baseUrl}`, restaurantData, {
-            headers: {
-                "X-Authorization": accessToken,
-            },
-        });
+        return request.post(`${baseUrl}`, restaurantData);
     };
 
     return {
         createRestaurant,
+    };
+};
+
+export const useUploadImages = () => {
+    const { request } = useAuth();
+
+    const uploadImages = async (restaurantId, images) => {
+        const formData = new FormData();
+
+        images.forEach((file) => {
+            formData.append("images", file);
+        });
+
+        return request.patch(`${baseUrl}/${restaurantId}/upload-image`, formData);
+    };
+
+    return {
+        uploadImages,
     };
 };
 
