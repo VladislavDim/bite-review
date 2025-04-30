@@ -1,164 +1,204 @@
 import { useState } from "react";
-import SubmitButton from "../components/ui/SubmitButton";
-import { useCreateRestaurant } from "../api/restaurantApi";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { useActionState } from "react";
+import SubmitButton from "../components/ui/SubmitButton";
+import { useCreateRestaurant, useUploadImages } from "../api/restaurantApi";
+import { useGetCities } from "../api/cityApi";
 
 export default function AddRestaurant() {
-    const [featuresVisible, setFeaturesVisible] = useState(true);
-    const [imageFields, setImageFields] = useState([""]);
-    const [errors, setErrors] = useState({});
+    const [images, setImages] = useState([]);
     const [serverError, setServerError] = useState(null);
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
     const { createRestaurant } = useCreateRestaurant();
+    const { uploadImages } = useUploadImages(); 
+    const { cities, loading } = useGetCities();
     const navigate = useNavigate();
 
-    const toggleFeatures = () => setFeaturesVisible((prev) => !prev);
-
-    const handleImageChange = (index, value) => {
-        const updatedFields = [...imageFields];
-        updatedFields[index] = value;
-        setImageFields(updatedFields);
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        const newImages = selectedFiles.filter(
+            (file) =>
+                !images.find((img) => img.name === file.name && img.size === file.size)
+        );
+        setImages((prev) => [...prev, ...newImages]);
+        e.target.value = null;
     };
 
-    const addImageField = () => setImageFields([...imageFields, ""]);
+    const removeImage = (indexToRemove) => {
+        setImages((prev) => prev.filter((_, i) => i !== indexToRemove));
+    };
 
-    const createHandler = async (_, formData) => {
-        setServerError(null); 
-        const values = Object.fromEntries(formData);
-        const validImageUrls = imageFields.filter((url) => url.trim().startsWith("http"));
+    const onSubmit = async (data) => {
+        setServerError(null);
 
-        const newErrors = {};
-        if (!values.name?.trim()) newErrors.name = "Name is required.";
-        if (!values.location?.trim()) newErrors.location = "Location is required.";
-        if (!values.description || values.description.trim().length < 20)
-            newErrors.description = "Description must be at least 20 characters.";
-        if (validImageUrls.length === 0)
-            newErrors.images = "At least one valid image URL is required.";
-
-        setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0) return { ...values, errors: newErrors };
-
-        const features = formData.getAll("features");
-        const restaurantData = {
-            name: values.name,
-            address: values.location,
-            description: values.description,
-            images: validImageUrls,
-            features,
-        };
+        if (images.length === 0) {
+            setServerError("At least one image is required.");
+            return;
+        }
 
         try {
-            await createRestaurant(restaurantData);
+            const created = await createRestaurant(data);
+            const restaurantId = created._id;
+
+            await uploadImages(restaurantId, images);
+
             navigate("/restaurants");
         } catch (err) {
-
-            console.error("Failed to create restaurant", err);
-
-            err?.code === 403
-                ? setServerError("Your session has expired. Please log in again.")
-                : setServerError("An unexpected error occurred.");
-
-            return { ...values };
-
+            console.error("Failed to create restaurant or upload images", err);
+            setServerError("Failed to create restaurant. Try again.");
         }
     };
 
-    const [formState, submitAction, isPending] = useActionState(createHandler, {
-        name: "",
-        location: "",
-        description: "",
-    });
-
     return (
         <section className="max-w-2xl mx-auto mt-10 mb-20 p-6 bg-white rounded-2xl shadow-lg">
-            <h1 className="text-3xl font-bold text-center text-orange-600 mb-8">Create Your Restaurant</h1>
+            <h1 className="text-3xl font-bold text-center text-orange-600 mb-8">
+                Create Your Restaurant
+            </h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
 
-            <form action={submitAction} className="space-y-6" noValidate>
+                {/* Name */}
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                    <label className="block text-sm font-medium text-gray-700">Name</label>
                     <input
-                        name="name"
+                        {...register("name", { required: "Name is required" })}
                         type="text"
-                        defaultValue={formState.name}
-                        className={`mt-1 block w-full border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
+                        className="mt-1 block w-full border-2 border-gray-300 rounded-lg p-2 focus:border-orange-400 focus:ring-0 focus:outline-none"
                     />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                </div>
-
-                <div>
-                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
-                    <input
-                        name="location"
-                        type="text"
-                        defaultValue={formState.location}
-                        className={`mt-1 block w-full border ${errors.location ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
-                    />
-                    {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
-                </div>
-
-                <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-                    <textarea
-                        name="description"
-                        rows="4"
-                        defaultValue={formState.description}
-                        className={`mt-1 block w-full border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
-                    ></textarea>
-                    {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
-                </div>
-
-                <div>
-                    <button
-                        type="button"
-                        onClick={toggleFeatures}
-                        className="text-sm text-orange-600 font-semibold hover:underline mb-2"
-                    >
-                        {featuresVisible ? "Hide Features" : "Show Features"}
-                    </button>
-
-                    {featuresVisible && (
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-800">
-                            {["24h Open", "Outdoor Seating", "Pet Friendly", "Delivery", "Wheelchair Accessible", "Credit Card Payment", "Vegan Options", "Live Music", "Wi-Fi", "Parking", "Smoking Area", "Family Friendly"].map((feat) => (
-                                <label key={feat}>
-                                    <input type="checkbox" name="features" value={feat} className="mr-2" />
-                                    {feat}
-                                </label>
-                            ))}
-                        </div>
+                    {errors.name && (
+                        <p className="text-red-500 text-sm">{errors.name.message}</p>
                     )}
                 </div>
 
+                {/* Location */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URLs</label>
-                    {imageFields.map((value, index) => (
-                        <input
-                            key={index}
-                            type="text"
-                            value={value}
-                            onChange={(e) => handleImageChange(index, e.target.value)}
-                            placeholder="https://example.com/image.jpg"
-                            className={`mb-2 block w-full border ${errors.images && index === 0 ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
-                        />
-                    ))}
-                    {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
-                    <button
-                        type="button"
-                        onClick={addImageField}
-                        className="text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded"
-                    >
-                        + Add another image
-                    </button>
+                    <label className="block text-sm font-medium text-gray-700">Location</label>
+                    <input
+                        {...register("location", { required: "Location is required" })}
+                        type="text"
+                        className="mt-1 block w-full border-2 border-gray-300 rounded-lg p-2 focus:border-orange-400 focus:ring-0 focus:outline-none"
+                    />
+                    {errors.location && (
+                        <p className="text-red-500 text-sm">{errors.location.message}</p>
+                    )}
                 </div>
 
-                {serverError && (
-                    <p className="text-red-600 text-sm font-medium text-center">
-                        {serverError}
-                    </p>
+                {/* City */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">City</label>
+                    <select
+                        {...register("city", { required: "City is required" })}
+                        className="mt-1 block w-full border-2 border-gray-300 rounded-lg p-2 focus:border-orange-400 focus:ring-0 focus:outline-none"
+                        defaultValue=""
+                        disabled={loading}
+                    >
+                        <option value="" disabled>Select a city</option>
+                        {cities.map((city) => (
+                            <option key={city._id} value={city._id}>
+                                {city.name}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.city && (
+                        <p className="text-red-500 text-sm">{errors.city.message}</p>
+                    )}
+                </div>
+
+                {/* Description */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea
+                        {...register("description", {
+                            required: "Description is required",
+                            minLength: {
+                                value: 10,
+                                message: "Description must be at least 10 characters",
+                            },
+                        })}
+                        rows="4"
+                        className="mt-1 block w-full border-2 border-gray-300 rounded-lg p-2 focus:border-orange-400 focus:ring-0 focus:outline-none"
+                    />
+                    {errors.description && (
+                        <p className="text-red-500 text-sm">{errors.description.message}</p>
+                    )}
+                </div>
+
+                {/* Features */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Features</label>
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-800">
+                        {["24h Open", "Outdoor Seating", "Pet Friendly", "Delivery",
+                            "Wheelchair Accessible", "Credit Card Payment", "Vegan Options",
+                            "Live Music", "Wi-Fi", "Parking", "Smoking Area", "Family Friendly"]
+                            .map((feat) => (
+                                <label
+                                    key={feat}
+                                    className="flex items-center gap-2 px-2 py-1 border border-transparent rounded hover:border-orange-400 hover:bg-orange-100"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        value={feat}
+                                        {...register("features")}
+                                        className="accent-orange-500"
+                                    />
+                                    {feat}
+                                </label>
+                            ))}
+                    </div>
+                </div>
+
+                {/* Upload Images */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Upload Images
+                    </label>
+                    <label className="inline-block px-4 py-2 outline outline-2 outline-transparent 
+                                      text-white font-medium rounded cursor-pointer transition 
+                                      bg-gradient-to-r from-[#E9762B] to-[#f79d4d] 
+                                      hover:from-white hover:to-white hover:text-orange-500 hover:outline-orange-400"
+                    >
+                        Select Images
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+                    </label>
+                </div>
+
+                {/* Preview */}
+                {images.length > 0 && (
+                    <div className="flex flex-wrap gap-4 mt-4">
+                        {images.map((img, index) => (
+                            <div
+                                key={index}
+                                className="relative w-24 h-24 rounded overflow-hidden border border-orange-400 bg-gradient-to-r from-orange-300 to-orange-200 group transition-all"
+                            >
+                                <img
+                                    src={URL.createObjectURL(img)}
+                                    alt="preview"
+                                    className="w-full h-full object-cover transition-opacity group-hover:opacity-60"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => removeImage(index)}
+                                    className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded bg-white text-red-500 border border-red-500 text-sm font-bold hover:bg-red-500 hover:text-white group-hover:bg-red-100"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 )}
 
-                <SubmitButton disabled={isPending}>
-                    {isPending ? "Creating..." : "Create Restaurant"}
-                </SubmitButton>
+                {serverError && (
+                    <p className="text-red-500 text-sm mt-1">{serverError}</p>
+                )}
+
+                {/* Submit */}
+                <SubmitButton>Create Restaurant</SubmitButton>
             </form>
         </section>
     );
