@@ -22,17 +22,21 @@ export default function MyProfile() {
     const reviewsPerPage = 6;
 
     useEffect(() => {
-        if (!userId || !restaurants.length) {
-            return;
-        }
+        if (!userId) return;
 
         const fetchProfileAndReviews = async () => {
             try {
                 const fetchedProfile = await getUser(userId);
                 setProfile(fetchedProfile);
-                
+
                 const allReviews = await getAllReviews();
                 const myRestaurants = restaurants.filter(r => r.ownerId?._id === userId);
+
+                if (!myRestaurants.length) {
+                    setReviewsReceived([]);
+                    return;
+                }
+
                 const myRestaurantIds = myRestaurants.map(r => r._id);
 
                 const received = allReviews
