@@ -4,7 +4,7 @@ import * as restaurantService from '../services/restaurant.service.js';
  * GET /api/restaurants
  * Returns all restaurants with related city and owner
  */
-export const getAllRestaurants = async (req, res) => {
+export const getAll = async (req, res) => {
     try {
         const restaurants = await restaurantService.getAllRestaurants();
         res.json(restaurants);
@@ -17,7 +17,7 @@ export const getAllRestaurants = async (req, res) => {
  * GET /api/restaurants/:id
  * Returns restaurant with current id
  */
-export const getRestaurantById = async (req, res) => {
+export const getById = async (req, res) => {
     try {
         const restaurant = await restaurantService.getRestaurantById(req.params.id);
 
@@ -35,7 +35,7 @@ export const getRestaurantById = async (req, res) => {
  * POST /api/restaurants/upload
  * Upload restaurant image and return imageUrl
  */
-export const uploadRestaurantImage = (req, res) => {
+export const uploadImage = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
@@ -48,7 +48,7 @@ export const uploadRestaurantImage = (req, res) => {
  * POST /api/restaurants
  * Creates a new restaurant
  */
-export const createRestaurant = async (req, res) => {
+export const create = async (req, res) => {
     const { name, location, city, description, features } = req.body;
 
     if (!name || !location || !city || !description) {
@@ -82,7 +82,7 @@ export const createRestaurant = async (req, res) => {
  * PUT /api/restaurants/:id
  * Update an existing restaurant
  */
-export const updateRestaurant = async (req, res) => {
+export const update = async (req, res) => {
     try {
         const updated = await restaurantService.updateRestaurant(
             req.params.id,
@@ -100,7 +100,7 @@ export const updateRestaurant = async (req, res) => {
  * DELETE /api/restaurants/:id
  * Delete a restaurant
  */
-export const deleteRestaurant = async (req, res) => {
+export const remove = async (req, res) => {
     try {
         const deleted = await restaurantService.deleteRestaurant(
             req.params.id,
