@@ -15,8 +15,8 @@ import upload from '../middlewares/upload.middleware.js';
 const router = express.Router();
 
 router.get('/', getAll);
-router.post('/', authMiddleware, upload.single('image'), create);
-router.patch('/:id/upload-image', authMiddleware, upload.single('image'), uploadImage);
+router.post('/', authMiddleware, create);
+router.patch('/:id/upload-image', authMiddleware, upload.array('images'), uploadImage);
 router.get('/:id', getById);
 router.put('/:id', update);
 router.delete('/:id', remove);
