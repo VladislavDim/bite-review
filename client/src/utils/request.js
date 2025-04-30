@@ -3,7 +3,12 @@ const request = async (method, url, data, options = {}) => {
         options.method = method;
     }
 
-    if (data) {
+    if (data instanceof FormData) {
+        options = {
+            ...options,
+            body: data,
+        };
+    } else if (data) {
         options = {
             ...options,
             headers: {
@@ -11,7 +16,7 @@ const request = async (method, url, data, options = {}) => {
                 ...options.headers,
             },
             body: JSON.stringify(data),
-        }
+        };
     }
 
     const response = await fetch(url, options);
