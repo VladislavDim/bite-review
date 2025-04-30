@@ -39,28 +39,34 @@ export const getById = async (req, res) => {
 export const uploadImage = async (req, res) => {
     const { id } = req.params;
 
-    if (!req.file) {
-        return res.status(400).json({ message: 'No image file provided.' });
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ message: 'At least one image file is required.' });
     }
 
     try {
         const restaurant = await restaurantService.getRestaurantById(id);
 
         if (!restaurant) {
-            await fs.unlink(`uploads/${req.file.filename}`);
+            // Изтриваме качените файлове ако ресторантът не съществува
+            await Promise.all(
+                req.files.map(file => fs.unlink(`uploads/${file.filename}`))
+            );
             return res.status(404).json({ message: 'Restaurant not found.' });
         }
 
-        const imagePath = `/uploads/${req.file.filename}`;
+        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
 
-        const updatedRestaurant = await restaurantService.updateImage(id, imagePath);
+        const updatedRestaurant = await restaurantService.updateImages(id, imagePaths);
 
         res.status(200).json(updatedRestaurant);
     } catch (error) {
-        console.error('Failed to upload restaurant image:', error);
+        console.error('Failed to upload restaurant images:', error);
 
-        if (req.file) {
-            await fs.unlink(`uploads/${req.file.filename}`);
+        // Изтриваме файловете при грешка
+        if (req.files) {
+            await Promise.all(
+                req.files.map(file => fs.unlink(`uploads/${file.filename}`))
+            );
         }
 
         res.status(500).json({ message: 'Internal server error' });
