@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState, useEffect } from "react";
+import { useContext, useMemo, useState, useEffect, useRef } from "react";
 import {
     FaUsers,
     FaListUl,
@@ -11,15 +11,22 @@ import ScrollToTop from "../components/ui/ScrollToTop";
 import { UserContext } from "../contexts/UserContext";
 import { Link } from "react-router";
 
+const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
+
 export default function Restaurants() {
     const ITEMS_PER_LOAD = 10;
     const { _id: userId } = useContext(UserContext);
     const isGuest = !userId;
+
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
     const [filter, setFilter] = useState("all");
     const [sort, setSort] = useState("name-asc");
     const [ratingsMap, setRatingsMap] = useState({});
     const [reviewCounts, setReviewCounts] = useState({});
+    const [hoveredCard, setHoveredCard] = useState(null);
+    const [hoveredImageIndex, setHoveredImageIndex] = useState(0);
+
+    const intervalRef = useRef(null);
 
     const { restaurants, loading, error } = useGetAllRestaurants();
     const { getAll: getAllReviews } = useGetAllReviews();
@@ -53,7 +60,7 @@ export default function Restaurants() {
         };
 
         fetchRatings();
-    }, []);
+    }, [getAllReviews]);
 
     const filteredRestaurants = useMemo(() => {
         let result = [...restaurants];
@@ -89,6 +96,23 @@ export default function Restaurants() {
 
     const handleLoadMore = () => {
         setVisibleCount((prev) => prev + ITEMS_PER_LOAD);
+    };
+
+    const handleMouseEnter = (restaurant) => {
+        setHoveredCard(restaurant._id);
+        setHoveredImageIndex(0);
+
+        if (intervalRef.current) clearInterval(intervalRef.current);
+
+        intervalRef.current = setInterval(() => {
+            setHoveredImageIndex((prev) => prev + 1);
+        }, 1000);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredCard(null);
+        setHoveredImageIndex(0);
+        clearInterval(intervalRef.current);
     };
 
     return (
@@ -160,18 +184,30 @@ export default function Restaurants() {
                                 gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
                             }}
                         >
-                            {visibleRestaurants.map((restaurant, index) => (
-                                <RestaurantCard
-                                    key={restaurant._id || index}
-                                    _id={restaurant._id}
-                                    name={restaurant.name}
-                                    address={restaurant.address || restaurant.location}
-                                    images={restaurant.images}
-                                    features={restaurant.features}
-                                    rating={ratingsMap[restaurant._id]}
-                                    reviewCount={reviewCounts[restaurant._id] || 0}
-                                />
-                            ))}
+                            {visibleRestaurants.map((restaurant, index) => {
+                                const images = restaurant.images || [];
+                                const displayImage = images.length > 0
+                                    ? `${baseUrl}${images[hoveredCard === restaurant._id ? hoveredImageIndex % images.length : 0]}`
+                                    : "/placeholder.jpg";
+
+                                return (
+                                    <div
+                                        key={restaurant._id || index}
+                                        onMouseEnter={() => handleMouseEnter(restaurant)}
+                                        onMouseLeave={handleMouseLeave}
+                                    >
+                                        <RestaurantCard
+                                            _id={restaurant._id}
+                                            name={restaurant.name}
+                                            address={restaurant.address || restaurant.location}
+                                            images={[displayImage]}
+                                            features={restaurant.features}
+                                            rating={ratingsMap[restaurant._id]}
+                                            reviewCount={reviewCounts[restaurant._id] || 0}
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
 
                         {visibleCount < filteredRestaurants.length && (
