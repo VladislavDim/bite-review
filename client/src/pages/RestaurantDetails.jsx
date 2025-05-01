@@ -7,6 +7,8 @@ import { useGetRestaurantById } from "../api/restaurantApi";
 import { useGetReviewsByRestaurantId, useCreateReview } from "../api/reviewApi";
 import { UserContext } from "../contexts/UserContext";
 
+const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
+
 export default function RestaurantDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -40,6 +42,16 @@ export default function RestaurantDetails() {
 
         fetchData();
     }, [id, sortOption]);
+
+    // Preload restaurant images to avoid repeated network requests
+    useEffect(() => {
+        if (restaurant?.images?.length > 0) {
+            restaurant.images.forEach((src) => {
+                const img = new Image();
+                img.src = `${baseUrl}${src}`;
+            });
+        }
+    }, [restaurant]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -115,7 +127,7 @@ export default function RestaurantDetails() {
 
             <div className="mb-8">
                 <img
-                    src={restaurant.images?.[imageIndex]}
+                    src={`${baseUrl}${restaurant.images?.[imageIndex]}`}
                     alt="Restaurant visual"
                     className="rounded-xl w-full h-[400px] object-cover shadow-md transition-all duration-300"
                 />
