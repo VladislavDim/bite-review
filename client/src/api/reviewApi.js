@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import request from "../utils/request";
 const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/reviews`;
 
@@ -19,9 +20,9 @@ export const useGetReviewsByRestaurantId = () => {
 };
 
 export const useGetAllReviews = () => {
-    const getAll = async () => {
+    const getAll = useCallback(async () => {
         return request.get(`${baseUrl}`);
-    };
+    }, []);
+
     return { getAll };
 };
-
