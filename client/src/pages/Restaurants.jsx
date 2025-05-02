@@ -188,7 +188,7 @@ export default function Restaurants() {
                                 const images = restaurant.images || [];
                                 const displayImage = images.length > 0
                                     ? `${baseUrl}${images[hoveredCard === restaurant._id ? hoveredImageIndex % images.length : 0]}`
-                                    : "/placeholder.jpg";
+                                    : `${baseUrl}/public/no-image-available.png`;
 
                                 return (
                                     <div
