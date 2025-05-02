@@ -47,7 +47,6 @@ export const uploadImage = async (req, res) => {
         const restaurant = await restaurantService.getRestaurantById(id);
 
         if (!restaurant) {
-            // Изтриваме качените файлове ако ресторантът не съществува
             await Promise.all(
                 req.files.map(file => fs.unlink(`uploads/${file.filename}`))
             );
@@ -62,7 +61,6 @@ export const uploadImage = async (req, res) => {
     } catch (error) {
         console.error('Failed to upload restaurant images:', error);
 
-        // Изтриваме файловете при грешка
         if (req.files) {
             await Promise.all(
                 req.files.map(file => fs.unlink(`uploads/${file.filename}`))
