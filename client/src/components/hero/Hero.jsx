@@ -45,42 +45,75 @@ export default function Hero() {
 
     const featuredRestaurants = restaurants.slice(0, 5);
 
-    const renderCard = (r) => (
-        <div
-            key={r._id}
-            className="carousel-card fixed-height"
-            onMouseEnter={() => {
-                setIsPaused(true);
-                setHoveredId(r._id);
-            }}
-            onMouseLeave={() => {
-                setIsPaused(false);
-                setHoveredId(null);
-            }}
-        >
-            <Link to={`/restaurants/${r._id}/details`}>
-                <img
-                    src={r.images?.[0] ? `${baseUrl}${r.images[0]}` : "/placeholder.jpg"}
-                    alt={r.name}
-                    className="carousel-image"
-                />
-                <div className="carousel-info">
-                    <h4 className="text-lg font-semibold">{r.name}</h4>
+    const renderCard = (r, index) => {
+        const imageUrl = r.images?.[0]
+            ? `${baseUrl}${r.images[0]}`
+            : `${baseUrl}/public/no-image-available.png`;
+        const isDefaultImage = imageUrl.includes("no-image-available");
 
-                    {hoveredId === r._id && (
-                        <div className="carousel-hover-details">
-                            <p><span className="font-semibold">Location:</span> {r.location}</p>
-                            {r.features?.length > 0 && (
-                                <p><span className="font-semibold">Features:</span> {r.features.join(" • ")}</p>
-                            )}
-                        </div>
-                    )}
+        const locationDisplay =
+            r.location?.length > 40 ? r.location.slice(0, 40) + "..." : r.location;
 
-                    <p className="carousel-rating">⭐ {(ratingsMap[r._id] || 0).toFixed(1)}</p>
-                </div>
-            </Link>
-        </div>
-    );
+        const featuresDisplay = r.features?.join(" • ");
+        const featuresDisplayTruncated =
+            featuresDisplay?.length > 50
+                ? featuresDisplay.slice(0, 50) + "..."
+                : featuresDisplay;
+
+        return (
+            <div
+                key={`${r._id}-${index}`}
+                className="carousel-card fixed-height"
+                onMouseEnter={() => {
+                    setIsPaused(true);
+                    setHoveredId(r._id);
+                }}
+                onMouseLeave={() => {
+                    setIsPaused(false);
+                    setHoveredId(null);
+                }}
+            >
+                <Link to={`/restaurants/${r._id}/details`}>
+                    <div
+                        className="image-wrapper"
+                        style={{
+                            backgroundColor: isDefaultImage ? "#d57133" : "transparent",
+                        }}
+                    >
+                        <img
+                            src={imageUrl}
+                            alt={r.name}
+                            className={isDefaultImage ? "default-image" : "carousel-image"}
+                        />
+                    </div>
+                    <div className="carousel-info">
+                        <h4 className="text-lg font-semibold">{r.name}</h4>
+
+                        {hoveredId === r._id && (
+                            <div className="carousel-hover-details">
+                                {r.location && (
+                                    <p>
+                                        <span className="font-semibold">Location:</span>{" "}
+                                        {locationDisplay}
+                                    </p>
+                                )}
+                                {featuresDisplayTruncated && (
+                                    <p>
+                                        <span className="font-semibold">Features:</span>{" "}
+                                        {featuresDisplayTruncated}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        <p className="carousel-rating">
+                            ⭐ {(ratingsMap[r._id] || 0).toFixed(1)}
+                        </p>
+                    </div>
+                </Link>
+            </div>
+        );
+    };
 
     return (
         <section className="hero-section text-center text-white py-24">
@@ -91,20 +124,22 @@ export default function Hero() {
 
             <Link
                 to={userId ? "/restaurants" : "/register"}
-                className="hero-button mb-24"
+                className="hero-button"
             >
                 Get Started
             </Link>
 
             {featuredRestaurants.length >= 5 ? (
-                <div className="carousel-flex-wrapper mt-12">
+                <div className="carousel-flex-wrapper mt-6">
                     <div className={`carousel-items ${isPaused ? "paused" : ""}`}>
-                        {[...featuredRestaurants, ...featuredRestaurants].map(renderCard)}
+                        {[...featuredRestaurants, ...featuredRestaurants].map((r, index) =>
+                            renderCard(r, index)
+                        )}
                     </div>
                 </div>
             ) : (
-                <div className="flex gap-6 justify-center flex-wrap mt-12">
-                    {featuredRestaurants.map(renderCard)}
+                <div className="carousel-center-wrapper mt-6">
+                    {featuredRestaurants.map((r, index) => renderCard(r, index))}
                 </div>
             )}
         </section>
