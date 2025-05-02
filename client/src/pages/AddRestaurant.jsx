@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import SubmitButton from "../components/ui/SubmitButton";
 import { useCreateRestaurant, useUploadImages } from "../api/restaurantApi";
 import { useGetCities } from "../api/cityApi";
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES, MAX_IMAGE_SIZE_MB } from "../utils/image.validation";
 
 export default function AddRestaurant() {
     const [images, setImages] = useState([]);
@@ -11,17 +12,36 @@ export default function AddRestaurant() {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { createRestaurant } = useCreateRestaurant();
-    const { uploadImages } = useUploadImages(); 
+    const { uploadImages } = useUploadImages();
     const { cities, loading } = useGetCities();
     const navigate = useNavigate();
 
+    // Handle file input and validate each file
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
-        const newImages = selectedFiles.filter(
-            (file) =>
-                !images.find((img) => img.name === file.name && img.size === file.size)
-        );
-        setImages((prev) => [...prev, ...newImages]);
+        const newValidImages = [];
+        let localError = "";
+
+        selectedFiles.forEach((file) => {
+            if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                localError = "Only image files are allowed (.jpg, .jpeg, .png, .webp)";
+            } else if (file.size > MAX_IMAGE_SIZE_BYTES) {
+                localError = `Each file must be smaller than ${MAX_IMAGE_SIZE_MB}MB`;
+            } else {
+                const alreadyExists = images.find(
+                    (img) => img.name === file.name && img.size === file.size
+                );
+                if (!alreadyExists) newValidImages.push(file);
+            }
+        });
+
+        if (localError) {
+            setServerError(localError);
+        } else {
+            setImages((prev) => [...prev, ...newValidImages]);
+            setServerError(null);
+        }
+
         e.target.value = null;
     };
 
@@ -29,6 +49,7 @@ export default function AddRestaurant() {
         setImages((prev) => prev.filter((_, i) => i !== indexToRemove));
     };
 
+    // Submit form data and upload images
     const onSubmit = async (data) => {
         setServerError(null);
 
@@ -46,7 +67,7 @@ export default function AddRestaurant() {
             navigate("/restaurants");
         } catch (err) {
             console.error("Failed to create restaurant or upload images", err);
-            setServerError("Failed to create restaurant. Try again.");
+            setServerError(err.message || "Something went wrong. Please try again.");
         }
     };
 
@@ -55,8 +76,8 @@ export default function AddRestaurant() {
             <h1 className="text-3xl font-bold text-center text-orange-600 mb-8">
                 Create Your Restaurant
             </h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
 
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
                 {/* Name */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -127,23 +148,24 @@ export default function AddRestaurant() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Features</label>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-800">
-                        {["24h Open", "Outdoor Seating", "Pet Friendly", "Delivery",
+                        {[
+                            "24h Open", "Outdoor Seating", "Pet Friendly", "Delivery",
                             "Wheelchair Accessible", "Credit Card Payment", "Vegan Options",
-                            "Live Music", "Wi-Fi", "Parking", "Smoking Area", "Family Friendly"]
-                            .map((feat) => (
-                                <label
-                                    key={feat}
-                                    className="flex items-center gap-2 px-2 py-1 border border-transparent rounded hover:border-orange-400 hover:bg-orange-100"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        value={feat}
-                                        {...register("features")}
-                                        className="accent-orange-500"
-                                    />
-                                    {feat}
-                                </label>
-                            ))}
+                            "Live Music", "Wi-Fi", "Parking", "Smoking Area", "Family Friendly"
+                        ].map((feat) => (
+                            <label
+                                key={feat}
+                                className="flex items-center gap-2 px-2 py-1 border border-transparent rounded hover:border-orange-400 hover:bg-orange-100"
+                            >
+                                <input
+                                    type="checkbox"
+                                    value={feat}
+                                    {...register("features")}
+                                    className="accent-orange-500"
+                                />
+                                {feat}
+                            </label>
+                        ))}
                     </div>
                 </div>
 
@@ -168,7 +190,7 @@ export default function AddRestaurant() {
                     </label>
                 </div>
 
-                {/* Preview */}
+                {/* Image Preview */}
                 {images.length > 0 && (
                     <div className="flex flex-wrap gap-4 mt-4">
                         {images.map((img, index) => (
@@ -193,11 +215,12 @@ export default function AddRestaurant() {
                     </div>
                 )}
 
+                {/* Server Error */}
                 {serverError && (
                     <p className="text-red-500 text-sm mt-1">{serverError}</p>
                 )}
 
-                {/* Submit */}
+                {/* Submit Button */}
                 <SubmitButton>Create Restaurant</SubmitButton>
             </form>
         </section>
