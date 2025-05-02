@@ -1,4 +1,4 @@
-import { FaFacebookF, FaInstagram, FaGithub } from "react-icons/fa";
+import { FaInstagram, FaGithub, FaLinkedinIn } from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -16,9 +16,24 @@ export default function Footer() {
 
         {/* Social icons */}
         <div className="flex gap-4 text-xl">
-          <a href="#" className="hover:text-orange-400 transition"><FaFacebookF /></a>
-          <a href="#" className="hover:text-orange-400 transition"><FaInstagram /></a>
-          <a href="#" className="hover:text-orange-400 transition"><FaGithub /></a>
+          <a
+            href="https://www.linkedin.com/in/vladislav-d-a33324182/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-orange-400 transition"
+          ><FaLinkedinIn /></a>
+          <a
+            href="https://www.instagram.com/gumumpo6/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-orange-400 transition"
+          ><FaInstagram /></a>
+          <a
+            href="https://github.com/VladislavDim"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-orange-400 transition"
+          ><FaGithub /></a>
         </div>
       </div>
     </footer>
