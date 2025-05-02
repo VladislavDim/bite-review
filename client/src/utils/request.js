@@ -21,21 +21,17 @@ const request = async (method, url, data, options = {}) => {
 
     const response = await fetch(url, options);
 
-    const responseContentType = response.headers.get('Content-Type');
-    if (!responseContentType) {
-        return;
-    }
+    const contentType = response.headers.get('Content-Type');
+    if (!contentType) return;
+
+    const result = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-        const result = await response.json()
-
-        throw result;
+        const message = result.message || `Request failed with status ${response.status}`;
+        throw new Error(message);
     }
 
-    const result = await response.json();
-
     return result;
-
 };
 
 export default {
@@ -44,4 +40,4 @@ export default {
     put: request.bind(null, 'PUT'),
     delete: request.bind(null, 'DELETE'),
     baseRequest: request,
-}
+};
