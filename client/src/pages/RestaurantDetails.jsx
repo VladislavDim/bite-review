@@ -43,7 +43,6 @@ export default function RestaurantDetails() {
         fetchData();
     }, [id, sortOption]);
 
-    // Preload restaurant images to avoid repeated network requests
     useEffect(() => {
         if (restaurant?.images?.length > 0) {
             restaurant.images.forEach((src) => {
@@ -111,6 +110,15 @@ export default function RestaurantDetails() {
 
     if (!restaurant) return <p className="text-center mt-10">Loading...</p>;
 
+    const hasImages = restaurant?.images?.length > 0;
+    const imageSrc = hasImages
+        ? `${baseUrl}${restaurant.images[imageIndex]}`
+        : `${baseUrl}/public/no-image-available.png`;
+
+    const imageClass = hasImages
+        ? "object-cover"
+        : "object-contain p-6 bg-[#d57133]";
+
     return (
         <section className="px-6 py-10 max-w-5xl mx-auto">
             <div className="mb-6">
@@ -121,15 +129,15 @@ export default function RestaurantDetails() {
                 </div>
                 <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
                     <FaMapMarkerAlt />
-                    <span>{restaurant.address || restaurant.location}</span>
+                    <span>{`${restaurant.location}, ${restaurant.city.name}`}</span>
                 </div>
             </div>
 
             <div className="mb-8">
                 <img
-                    src={`${baseUrl}${restaurant.images?.[imageIndex]}`}
+                    src={imageSrc}
                     alt="Restaurant visual"
-                    className="rounded-xl w-full h-[400px] object-cover shadow-md transition-all duration-300"
+                    className={`rounded-xl w-full h-[400px] shadow-md transition-all duration-300 ${imageClass}`}
                 />
             </div>
 
@@ -146,7 +154,6 @@ export default function RestaurantDetails() {
             <div className="mt-12">
                 <h3 className="text-xl font-semibold text-[#E9762B] mb-4">Reviews</h3>
 
-                {/* Sort Options */}
                 <div className="mb-6">
                     <label className="text-sm font-medium text-gray-700 mr-2">Sort by:</label>
                     <select
@@ -168,7 +175,10 @@ export default function RestaurantDetails() {
                                 <StarRatingDisplay rating={rev.rating} size={19} />
                             </div>
                             <p className="text-gray-800">{rev.comment}</p>
-                            <p className="text-xs text-gray-400 mt-1">  – {rev.creatorName || "Anonymous"}, {new Date(rev._createdOn).toLocaleDateString()}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                                – {rev.creatorName || "Anonymous"},{" "}
+                                {new Date(rev._createdOn).toLocaleDateString()}
+                            </p>
                         </div>
                     ))}
                 </div>
@@ -176,15 +186,17 @@ export default function RestaurantDetails() {
                 {totalPages > 1 && (
                     <div className="flex justify-center gap-3 mb-8">
                         <button
-                            onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                             disabled={currentPage === 1}
                             className="px-3 py-1 border text-sm rounded text-[#E9762B] border-[#E9762B] hover:bg-[#E9762B] hover:text-white disabled:opacity-50"
                         >
                             Previous
                         </button>
-                        <span className="text-sm text-gray-600">Page {currentPage} of {totalPages}</span>
+                        <span className="text-sm text-gray-600">
+                            Page {currentPage} of {totalPages}
+                        </span>
                         <button
-                            onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                             disabled={currentPage === totalPages}
                             className="px-3 py-1 border text-sm rounded text-[#E9762B] border-[#E9762B] hover:bg-[#E9762B] hover:text-white disabled:opacity-50"
                         >
