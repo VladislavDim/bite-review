@@ -19,15 +19,19 @@ import AddRestaurant from './pages/AddRestaurant'
 import EditRestaurant from './pages/EditRestaurant'
 import MyRestaurants from './pages/MyRestaurants'
 import NotFound from './pages/NotFound'
+import TopInfoBar from './components/top-info-bar/TopInfoBar'
+import About from './pages/About'
 
 import './App.css'
+import ContactUs from './pages/ContactUs'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 
 function App() {
   return (
     <UserProvider>
       <div className="min-h-screen flex flex-col">
         <Header />
-
+        <TopInfoBar />
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -47,6 +51,10 @@ function App() {
               <Route path="/my-restaurants" element={<MyRestaurants />} />
               <Route path="/restaurants/:id/edit" element={<EditRestaurant />} />
             </Route>
+
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
