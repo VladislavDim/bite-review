@@ -8,6 +8,8 @@ import paths from './utils/paths.js';
 import reviewRoutes from './routes/review.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import corsMiddleware from './middlewares/cors.middleware.js';
+import { createStaticFileGuard, staticRateLimiter } from './middlewares/static-file-guard.middleware.js';
+import errorHandler from './middlewares/error-handler.middleware.js';
 
 dotenv.config();
 
@@ -18,14 +20,24 @@ connectDB();
 
 app.use(corsMiddleware);
 app.use(express.json());
-app.use('/uploads', express.static(paths.uploads));
+app.use('/uploads',
+  staticRateLimiter,
+  createStaticFileGuard(),
+  express.static(paths.uploads, { index: false })
+);
+app.use('/public',
+  staticRateLimiter,
+  createStaticFileGuard(undefined, 'public, max-age=86400'),
+  express.static('public', { index: false })
+);
 app.use('/api/cities', cityRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/auth', authRoutes);
+app.use(errorHandler);
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('BiteReview API is running!');
 });
 
