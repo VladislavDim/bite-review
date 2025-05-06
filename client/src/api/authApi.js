@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useContext } from "react";
 import request from "../utils/request"
 import { UserContext } from "../contexts/UserContext";
+import { registerLogout } from "../utils/logoutDispatcher";
 
 const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/auth`;
 
@@ -30,22 +31,29 @@ export const useLogout = () => {
     const { token: accessToken, userLogoutHandler } = useContext(UserContext);
     const [isLoggedOut, setIsLoggedOut] = useState(false);
 
-    const logout = useCallback(async () => {
-        if (!accessToken) return;
+    const logout = useCallback(
+        async (skipServer = false) => {
+            try {
+                if (!skipServer && accessToken) {
+                    await request.post(`${baseUrl}/logout`, null, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    });
+                }
+            } catch (err) {
+                console.error("Logout failed", err);
+            } finally {
+                userLogoutHandler();
+                setIsLoggedOut(true);
+            }
+        },
+        [accessToken, userLogoutHandler]
+    );
 
-        try {
-            await request.post(`${baseUrl}/logout`, null, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-        } catch (err) {
-            console.error("Logout failed", err);
-        } finally {
-            userLogoutHandler();
-            setIsLoggedOut(true);
-        }
-    }, [accessToken, userLogoutHandler]);
+    useEffect(() => {
+        registerLogout(logout);
+    }, [logout]);
 
     return {
         logout,
