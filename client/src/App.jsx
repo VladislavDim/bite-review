@@ -21,14 +21,18 @@ import MyRestaurants from './pages/MyRestaurants'
 import NotFound from './pages/NotFound'
 import TopInfoBar from './components/top-info-bar/TopInfoBar'
 import About from './pages/About'
-
-import './App.css'
 import ContactUs from './pages/ContactUs'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 
+import './App.css'
+import LogoutRegistrar from './components/logoutRegister'
+
+
 function App() {
+
   return (
     <UserProvider>
+      <LogoutRegistrar />
       <div className="min-h-screen flex flex-col">
         <Header />
         <TopInfoBar />
