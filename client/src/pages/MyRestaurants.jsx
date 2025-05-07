@@ -16,7 +16,7 @@ export default function MyRestaurants() {
         }
     }, [restaurants]);
 
-    const ownedRestaurants = restaurantList.filter(r => r._ownerId === userId);
+    const ownedRestaurants = restaurantList.filter(r => r.owner._id === userId);
 
     const handleDelete = async (id) => {
         const confirm = window.confirm("Are you sure you want to delete this restaurant?");

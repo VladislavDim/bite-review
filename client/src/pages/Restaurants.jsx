@@ -66,9 +66,9 @@ export default function Restaurants() {
         let result = [...restaurants];
 
         if (filter === "mine") {
-            result = result.filter((r) => r._ownerId === userId);
+            result = result.filter((r) => r.owner._id === userId);
         } else if (filter === "others") {
-            result = result.filter((r) => r._ownerId !== userId);
+            result = result.filter((r) => r.owner._id !== userId);
         }
 
         switch (sort) {
