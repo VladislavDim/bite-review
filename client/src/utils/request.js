@@ -25,7 +25,7 @@ const request = async (method, url, data, options = {}) => {
     ? await response.json().catch(() => ({}))
     : null;
 
-  if (response.status === 401) {
+  if (response.status === 401 && !url.endsWith("/login")) {
     triggerLogout(); 
     return;
   }
