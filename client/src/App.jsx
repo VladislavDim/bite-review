@@ -23,9 +23,9 @@ import TopInfoBar from './components/top-info-bar/TopInfoBar'
 import About from './pages/About'
 import ContactUs from './pages/ContactUs'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import LogoutRegistrar from './init/logoutRegister'
 
 import './App.css'
-import LogoutRegistrar from './components/logoutRegister'
 
 
 function App() {
