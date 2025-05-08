@@ -1,4 +1,5 @@
 import Restaurant from '../models/restaurant.model.js';
+import Review from '../models/review.model.js';
 
 /**
  * GET /api/restaurants
@@ -102,4 +103,20 @@ export const updateImages = async (id, imagePaths) => {
         { $push: { images: { $each: imagePaths } } },
         { new: true }
     );
+};
+
+/**
+ * Internal: Recalculates the average rating and review count for a restaurant.
+ * Called after creating, updating or deleting a review.
+ */
+export const recalculateAverageRating = async (restaurantId) => {
+    const reviews = await Review.find({ restaurant: restaurantId });
+
+    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+    const average = total / reviews.length;
+
+    await Restaurant.findByIdAndUpdate(restaurantId, {
+        averageRating: average.toFixed(1),
+        reviewCount: reviews.length,
+    });
 };
