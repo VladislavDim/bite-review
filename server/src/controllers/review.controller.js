@@ -1,5 +1,4 @@
-import Review from '../models/review.model.js';
-import Restaurant from '../models/restaurant.model.js';
+import { createReviewForRestaurant, getReviews } from '../services/review.service.js';
 
 /**
  * POST /api/reviews
@@ -7,28 +6,21 @@ import Restaurant from '../models/restaurant.model.js';
  */
 export const createReview = async (req, res) => {
     try {
-        const { restaurant, user, rating, comment } = req.body;
-
-        const review = await Review.create({
-            restaurant,
-            user,
+        const { restaurantId, rating, comment } = req.body;
+        const userId = req.user._id;
+        const review = await createReviewForRestaurant({
+            restaurantId,
+            userId,
             rating,
             comment,
-        });
-
-        const reviews = await Review.find({ restaurant });
-        const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-        const average = total / reviews.length;
-
-        await Restaurant.findByIdAndUpdate(restaurant, {
-            averageRating: average.toFixed(1),
-            reviewCount: reviews.length,
         });
 
         res.status(201).json(review);
     } catch (error) {
         console.error(error);
-        res.status(400).json({ message: 'Failed to create review' });
+        res
+            .status(error.status || 400)
+            .json({ message: error.message || "Failed to create review" });
     }
 };
 
@@ -38,13 +30,11 @@ export const createReview = async (req, res) => {
  */
 export const getReviewsByRestaurant = async (req, res) => {
     try {
-        const reviews = await Review.find({ restaurant: req.params.restaurantId })
-            .populate('user', 'username')
-            .sort({ createdAt: -1 });
-
+        const reviews = await getReviews(req.params.restaurantId);
         res.json(reviews);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch reviews' });
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch reviews" });
     }
 };
 
@@ -54,12 +44,10 @@ export const getReviewsByRestaurant = async (req, res) => {
  */
 export const getAllReviews = async (req, res) => {
     try {
-        const reviews = await Review.find()
-            .populate('user', 'username')
-            .sort({ createdAt: -1 });
-
+        const reviews = await getReviews(); // no ID = fetch all
         res.json(reviews);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch reviews' });
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch reviews" });
     }
 };
