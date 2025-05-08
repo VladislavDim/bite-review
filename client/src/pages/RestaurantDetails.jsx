@@ -19,11 +19,16 @@ export default function RestaurantDetails() {
 
     const [restaurant, setRestaurant] = useState(null);
     const [imageIndex, setImageIndex] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
+    const [showLightbox, setShowLightbox] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState(0);
+
     const [newReview, setNewReview] = useState("");
     const [newRating, setNewRating] = useState(0);
     const [reviews, setReviews] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState("newest");
+    const [reviewError, setReviewError] = useState(null);
     const REVIEWS_PER_PAGE = 5;
 
     useEffect(() => {
@@ -53,13 +58,36 @@ export default function RestaurantDetails() {
     }, [restaurant]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setImageIndex((prev) =>
-                prev === (restaurant?.images?.length || 1) - 1 ? 0 : prev + 1
-            );
-        }, 2000);
-        return () => clearInterval(interval);
-    }, [restaurant]);
+        if (!isHovered) {
+            const interval = setInterval(() => {
+                setImageIndex((prev) =>
+                    prev === (restaurant?.images?.length || 1) - 1 ? 0 : prev + 1
+                );
+            }, 2000);
+            return () => clearInterval(interval);
+        }
+    }, [restaurant, isHovered]);
+
+    useEffect(() => {
+        const handleKey = (e) => {
+            if (e.key === "Escape") {
+                setShowLightbox(false);
+            } else if (e.key === "ArrowRight") {
+                setLightboxIndex((i) =>
+                    i === restaurant.images.length - 1 ? 0 : i + 1
+                );
+            } else if (e.key === "ArrowLeft") {
+                setLightboxIndex((i) =>
+                    i === 0 ? restaurant.images.length - 1 : i - 1
+                );
+            }
+        };
+
+        if (showLightbox) {
+            window.addEventListener("keydown", handleKey);
+        }
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [showLightbox, restaurant]);
 
     const sortReviews = (reviews, option) => {
         switch (option) {
@@ -82,6 +110,7 @@ export default function RestaurantDetails() {
 
     const handleReviewSubmit = async () => {
         if (newReview && newRating > 0) {
+            setReviewError(null);
             const newEntry = {
                 restaurantId: id,
                 creatorId: userId,
@@ -99,6 +128,7 @@ export default function RestaurantDetails() {
                 setCurrentPage(1);
             } catch (err) {
                 console.error("Failed to submit review:", err);
+                setReviewError(err?.message || "Something went wrong.");
             }
         }
     };
@@ -121,6 +151,66 @@ export default function RestaurantDetails() {
 
     return (
         <section className="px-6 py-10 max-w-5xl mx-auto">
+            {showLightbox && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center"
+                    style={{ backgroundColor: "rgba(0, 0, 0, 0.85)" }}
+                    onClick={() => setShowLightbox(false)}
+                >
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <img
+                            src={`${baseUrl}${restaurant.images[lightboxIndex]}`}
+                            alt="Full"
+                            className="max-w-4xl max-h-[90vh] rounded-lg shadow-lg"
+                        />
+                    </div>
+
+                    {/* Close Button – top right */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowLightbox(false);
+                        }}
+                        className="absolute top-5 right-5 text-white text-3xl font-bold hover:scale-125 transition-transform duration-200"
+                        aria-label="Close lightbox"
+                    >
+                        ×
+                    </button>
+                    
+                    {/* Left Arrow */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setLightboxIndex(
+                                lightboxIndex === 0
+                                    ? restaurant.images.length - 1
+                                    : lightboxIndex - 1
+                            );
+                        }}
+                        className="absolute left-6 top-1/2 transform -translate-y-1/2 text-white text-5xl font-bold cursor-pointer select-none"
+                    >
+                        ❮
+                    </button>
+
+                    {/* Right Arrow */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setLightboxIndex(
+                                lightboxIndex === restaurant.images.length - 1
+                                    ? 0
+                                    : lightboxIndex + 1
+                            );
+                        }}
+                        className="absolute right-6 top-1/2 transform -translate-y-1/2 text-white text-5xl font-bold cursor-pointer select-none"
+                    >
+                        ❯
+                    </button>
+                </div>
+
+            )}
+
+
             <div className="mb-6">
                 <h1 className="text-3xl font-bold text-[#E9762B]">{restaurant.name}</h1>
                 <div className="flex items-center gap-2 mt-2 text-gray-600">
@@ -137,7 +227,14 @@ export default function RestaurantDetails() {
                 <img
                     src={imageSrc}
                     alt="Restaurant visual"
-                    className={`rounded-xl w-full h-[400px] shadow-md transition-all duration-300 ${imageClass}`}
+                    className={`rounded-xl w-full h-[400px] shadow-md transition-all duration-300 ${imageClass} ${isHovered ? "scale-105 cursor-zoom-in" : ""
+                        }`}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    onClick={() => {
+                        setShowLightbox(true);
+                        setLightboxIndex(imageIndex);
+                    }}
                 />
             </div>
 
@@ -203,6 +300,10 @@ export default function RestaurantDetails() {
                             Next
                         </button>
                     </div>
+                )}
+
+                {reviewError && (
+                    <p className="text-red-500 text-sm mb-3 font-medium">{reviewError}</p>
                 )}
 
                 <textarea
