@@ -1,12 +1,13 @@
 import { useCallback } from "react";
 import request from "../utils/request";
+import useAuth from "../hooks/useAuth";
 const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/reviews`;
 
 export const useCreateReview = () => {
-    const create = async (reviewData, token) => {
-        return request.post(baseUrl, reviewData, {
-            headers: { "X-Authorization": token },
-        });
+    const { request } = useAuth();
+
+    const create = async (reviewData) => {
+        return request.post(baseUrl, reviewData);
     };
     return { create };
 };
