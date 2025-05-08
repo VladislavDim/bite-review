@@ -14,8 +14,7 @@ export const useCreateReview = () => {
 
 export const useGetReviewsByRestaurantId = () => {
     const getAll = async (restaurantId) => {
-        const query = encodeURIComponent(`restaurantId="${restaurantId}"`);
-        return request.get(`${baseUrl}?where=${query}`);
+        return request.get(`${baseUrl}/${restaurantId}`);
     };
     return { getAll };
 };
