@@ -28,6 +28,16 @@ const reviewSchema = new mongoose.Schema(
     }
 );
 
+reviewSchema.set("toJSON", {
+    virtuals: true,
+    transform: (_, ret) => {
+        if (ret.createdAt) {
+            ret.timestamp = new Date(ret.createdAt).getTime(); // 👈 милисекунди от createdAt
+        }
+        return ret;
+    },
+});
+
 const Review = mongoose.model('Review', reviewSchema);
 
 export default Review;
