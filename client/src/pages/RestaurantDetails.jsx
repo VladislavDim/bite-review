@@ -15,7 +15,7 @@ export default function RestaurantDetails() {
     const { getById } = useGetRestaurantById();
     const { getAll: getReviews } = useGetReviewsByRestaurantId();
     const { create: createReview } = useCreateReview();
-    const { name: userName, _id: userId, accessToken } = useContext(UserContext);
+    const { username, _id: userId, accessToken } = useContext(UserContext);
 
     const [restaurant, setRestaurant] = useState(null);
     const [imageIndex, setImageIndex] = useState(0);
@@ -116,13 +116,14 @@ export default function RestaurantDetails() {
             const newEntry = {
                 restaurantId: id,
                 creatorId: userId,
-                creatorName: userName,
+                creatorName: username,
                 rating: newRating,
                 comment: newReview,
             };
 
             try {
                 const created = await createReview(newEntry, accessToken);
+                created.user = { username };
                 const updated = sortReviews([created, ...reviews], sortOption);
                 setReviews(updated);
                 setNewReview("");
@@ -178,7 +179,7 @@ export default function RestaurantDetails() {
                     >
                         ×
                     </button>
-                    
+
                     {/* Left Arrow */}
                     <button
                         onClick={(e) => {
@@ -275,8 +276,8 @@ export default function RestaurantDetails() {
                             </div>
                             <p className="text-gray-800">{rev.comment}</p>
                             <p className="text-xs text-gray-400 mt-1">
-                                – {rev.creatorName || "Anonymous"},{" "}
-                                {new Date(rev._createdOn).toLocaleDateString()}
+                                – {rev.user.username || "Anonymous"},{" "}
+                                {new Date(rev.createdAt).toLocaleDateString()}
                             </p>
                         </div>
                     ))}
