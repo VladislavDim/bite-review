@@ -55,6 +55,7 @@ export default function RestaurantDetails() {
                 const img = new Image();
                 img.src = `${baseUrl}${src}`;
             });
+            setImagesPreloaded(true);
         }
     }, [restaurant, imagesPreloaded]);
 
