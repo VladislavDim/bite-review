@@ -98,10 +98,10 @@ export default function RestaurantDetails() {
             case "lowest":
                 return [...reviews].sort((a, b) => a.rating - b.rating);
             case "oldest":
-                return [...reviews].sort((a, b) => a._createdOn - b._createdOn);
+                return [...reviews].sort((a, b) => a.timestamp - b.timestamp);
             case "newest":
             default:
-                return [...reviews].sort((a, b) => b._createdOn - a._createdOn);
+                return [...reviews].sort((a, b) => b.timestamp - a.timestamp);
         }
     };
 
