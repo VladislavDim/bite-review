@@ -24,8 +24,8 @@ export default function Hero() {
                 const map = {};
 
                 reviews.forEach((r) => {
-                    if (!map[r.restaurantId]) map[r.restaurantId] = [];
-                    map[r.restaurantId].push(r.rating);
+                    if (!map[r.restaurant]) map[r.restaurant] = [];
+                    map[r.restaurant].push(r.rating);
                 });
 
                 const calculatedRatings = {};
