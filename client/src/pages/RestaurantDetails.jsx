@@ -22,6 +22,7 @@ export default function RestaurantDetails() {
     const [isHovered, setIsHovered] = useState(false);
     const [showLightbox, setShowLightbox] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
+    const [imagesPreloaded, setImagesPreloaded] = useState(false);
 
     const [newReview, setNewReview] = useState("");
     const [newRating, setNewRating] = useState(0);
@@ -49,13 +50,13 @@ export default function RestaurantDetails() {
     }, [id, sortOption]);
 
     useEffect(() => {
-        if (restaurant?.images?.length > 0) {
+        if (restaurant?.images?.length > 0 && !imagesPreloaded) {
             restaurant.images.forEach((src) => {
                 const img = new Image();
                 img.src = `${baseUrl}${src}`;
             });
         }
-    }, [restaurant]);
+    }, [restaurant, imagesPreloaded]);
 
     useEffect(() => {
         if (!isHovered) {
