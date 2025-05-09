@@ -39,10 +39,10 @@ export default function Restaurants() {
                 const counts = {};
 
                 allReviews.forEach((rev) => {
-                    if (!map[rev.restaurantId]) {
-                        map[rev.restaurantId] = [];
+                    if (!map[rev.restaurant]) {
+                        map[rev.restaurant] = [];
                     }
-                    map[rev.restaurantId].push(rev.rating);
+                    map[rev.restaurant].push(rev.rating);
                 });
 
                 const ratings = {};
