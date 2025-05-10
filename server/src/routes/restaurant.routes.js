@@ -19,6 +19,6 @@ router.post('/', authMiddleware, create);
 router.patch('/:id/upload-image', authMiddleware, upload.array('images'), uploadImage);
 router.get('/:id', getById);
 router.put('/:id', update);
-router.delete('/:id', remove);
+router.delete('/:id', authMiddleware, remove);
 
 export default router;
