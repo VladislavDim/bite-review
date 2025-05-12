@@ -1,20 +1,29 @@
-import { useEffect, useState,  useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useGetRestaurantById, useUpdateRestaurant } from "../api/restaurantApi";
+import { useGetRestaurantById, useUpdateRestaurant, useUploadImages, useUpdateRestaurantImages } from "../api/restaurantApi";
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES, MAX_IMAGE_SIZE_MB } from "../utils/image.validation";
+
+const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
 export default function EditRestaurant() {
     const { id } = useParams();
     const navigate = useNavigate();
+
     const { getById } = useGetRestaurantById();
     const { updateRestaurant } = useUpdateRestaurant();
+    const { uploadImages } = useUploadImages();
+    const { updateImages } = useUpdateRestaurantImages();
 
     const [formData, setFormData] = useState({
         name: "",
-        address: "",
+        location: "",
         description: "",
-        images: [""],
         features: [],
     });
+
+    const [existingImages, setExistingImages] = useState([]);
+    const [newImages, setNewImages] = useState([]);
+    const [serverError, setServerError] = useState(null);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
 
@@ -29,11 +38,11 @@ export default function EditRestaurant() {
                 const data = await getById(id);
                 setFormData({
                     name: data.name || "",
-                    address: data.address || "",
+                    location: data.location || "",
                     description: data.description || "",
-                    images: data.images.length > 0 ? data.images : [""],
                     features: data.features || [],
                 });
+                setExistingImages(data.images || []);
                 setLoading(false);
             } catch (err) {
                 console.error("Failed to fetch restaurant:", err);
@@ -51,49 +60,76 @@ export default function EditRestaurant() {
 
     const handleCheckbox = (feature) => {
         setFormData((prev) => {
-            const exists = prev.features.includes(feature);
-            const updated = exists
+            const updated = prev.features.includes(feature)
                 ? prev.features.filter((f) => f !== feature)
                 : [...prev.features, feature];
             return { ...prev, features: updated };
         });
     };
 
-    const handleImageChange = (index, value) => {
-        const updated = [...formData.images];
-        updated[index] = value;
-        setFormData((prev) => ({ ...prev, images: updated }));
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        const newValidImages = [];
+        let localError = "";
+
+        selectedFiles.forEach((file) => {
+            if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                localError = "Only image files are allowed (.jpg, .jpeg, .png, .webp)";
+            } else if (file.size > MAX_IMAGE_SIZE_BYTES) {
+                localError = `Each file must be smaller than ${MAX_IMAGE_SIZE_MB}MB`;
+            } else {
+                const alreadyExists = newImages.find(
+                    (img) => img.name === file.name && img.size === file.size
+                );
+                if (!alreadyExists) newValidImages.push(file);
+            }
+        });
+
+        if (localError) {
+            setServerError(localError);
+        } else {
+            setNewImages((prev) => [...prev, ...newValidImages]);
+            setServerError(null);
+        }
+
+        e.target.value = null;
     };
 
-    const addImageField = () => {
-        setFormData((prev) => ({ ...prev, images: [...prev.images, ""] }));
+    const removeExistingImage = (indexToRemove) => {
+        setExistingImages((prev) => prev.filter((_, i) => i !== indexToRemove));
     };
 
-    const removeImageField = (index) => {
-        const updated = [...formData.images];
-        updated.splice(index, 1);
-        setFormData((prev) => ({ ...prev, images: updated.length ? updated : [""] }));
+    const removeNewImage = (indexToRemove) => {
+        setNewImages((prev) => prev.filter((_, i) => i !== indexToRemove));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setServerError(null);
 
         const newErrors = {};
         if (!formData.name.trim()) newErrors.name = "Name is required.";
-        if (!formData.address.trim()) newErrors.address = "Address is required.";
+        if (!formData.location.trim()) newErrors.location = "Location is required.";
         if (!formData.description.trim() || formData.description.length < 20)
             newErrors.description = "Description must be at least 20 characters.";
-        if (!formData.images.some((url) => url.trim().startsWith("http")))
-            newErrors.images = "At least one valid image URL is required.";
+        if (existingImages.length === 0 && newImages.length === 0)
+            newErrors.images = "At least one image is required.";
 
         setErrors(newErrors);
         if (Object.keys(newErrors).length > 0) return;
 
         try {
             await updateRestaurant(id, formData);
+            await updateImages(id, existingImages);
+
+            if (newImages.length > 0) {
+                await uploadImages(id, newImages);
+            }
+
             navigate(`/restaurants/${id}/details`);
         } catch (err) {
             console.error("Failed to update restaurant", err);
+            setServerError(err.message || "Something went wrong. Please try again.");
         }
     };
 
@@ -103,6 +139,7 @@ export default function EditRestaurant() {
         <section className="max-w-2xl mx-auto mt-10 mb-20 p-6 bg-white rounded-2xl shadow-lg">
             <h1 className="text-3xl font-bold text-center text-orange-600 mb-8">Edit Restaurant</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Name */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Name</label>
                     <input
@@ -114,17 +151,19 @@ export default function EditRestaurant() {
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                 </div>
 
+                {/* Location */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Address</label>
+                    <label className="block text-sm font-medium text-gray-700">Location</label>
                     <input
-                        name="address"
-                        value={formData.address}
+                        name="location"
+                        value={formData.location}
                         onChange={handleChange}
-                        className={`mt-1 block w-full border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
+                        className={`mt-1 block w-full border ${errors.location ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
                     />
-                    {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                    {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
                 </div>
 
+                {/* Description */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Description</label>
                     <textarea
@@ -137,31 +176,53 @@ export default function EditRestaurant() {
                     {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                 </div>
 
+                {/* Upload images */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URLs</label>
-                    {formData.images.map((value, index) => (
-                        <div key={index} className="flex gap-2 items-center mb-2">
-                            <input
-                                type="text"
-                                value={value}
-                                onChange={(e) => handleImageChange(index, e.target.value)}
-                                placeholder="https://example.com/image.jpg"
-                                className={`block w-full border ${errors.images && index === 0 ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => removeImageField(index)}
-                                className="text-sm text-red-500 hover:underline"
-                            >Remove</button>
-                        </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={addImageField}
-                        className="text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded"
-                    >+ Add another image</button>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload Images</label>
+                    <label className="inline-block px-4 py-2 outline outline-2 outline-transparent text-white font-medium rounded cursor-pointer transition bg-gradient-to-r from-[#E9762B] to-[#f79d4d] hover:from-white hover:to-white hover:text-orange-500 hover:outline-orange-400">
+                        Select Images
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+                    </label>
                 </div>
 
+                {/* Preview uploaded and new images */}
+                <div className="flex flex-wrap gap-4 mt-4">
+                    {existingImages.map((img, index) => (
+                        <div key={index} className="relative w-24 h-24 rounded overflow-hidden border border-orange-400 bg-gradient-to-r from-orange-300 to-orange-200 group">
+                            <img src={`${baseUrl}${img}`} alt="existing" className="w-full h-full object-cover transition-opacity group-hover:opacity-60" />
+                            <button
+                                type="button"
+                                onClick={() => removeExistingImage(index)}
+                                className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded bg-white text-red-500 border border-red-500 text-sm font-bold hover:bg-red-500 hover:text-white group-hover:bg-red-100"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                    {newImages.map((img, index) => (
+                        <div key={index} className="relative w-24 h-24 rounded overflow-hidden border border-orange-400 bg-gradient-to-r from-orange-300 to-orange-200 group">
+                            <img src={URL.createObjectURL(img)} alt="new" className="w-full h-full object-cover transition-opacity group-hover:opacity-60" />
+                            <button
+                                type="button"
+                                onClick={() => removeNewImage(index)}
+                                className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded bg-white text-red-500 border border-red-500 text-sm font-bold hover:bg-red-500 hover:text-white group-hover:bg-red-100"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
+                {serverError && <p className="text-red-500 text-sm mt-1">{serverError}</p>}
+
+                {/* Features */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Features</label>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-800">
