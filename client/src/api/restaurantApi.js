@@ -35,6 +35,20 @@ export const useUploadImages = () => {
     };
 };
 
+export const useUpdateRestaurantImages = () => {
+    const { request } = useAuth();
+
+    const updateImages = async (restaurantId, images) => {
+        return request.patch(`${baseUrl}/${restaurantId}/update-images`, {
+            images,
+        });
+    };
+
+    return {
+        updateImages,
+    };
+};
+
 export const useGetAllRestaurants = () => {
     const [restaurants, setRestaurants] = useState([]);
     const [loading, setLoading] = useState(true);
