@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useGetRestaurantById, useUpdateRestaurant, useUploadImages, useUpdateRestaurantImages } from "../api/restaurantApi";
+import { useGetRestaurantById, useUpdateRestaurant, useUploadImages, useUpdateImages } from "../api/restaurantApi";
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES, MAX_IMAGE_SIZE_MB } from "../utils/image.validation";
 
 const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
@@ -12,7 +12,7 @@ export default function EditRestaurant() {
     const { getById } = useGetRestaurantById();
     const { updateRestaurant } = useUpdateRestaurant();
     const { uploadImages } = useUploadImages();
-    const { updateImages } = useUpdateRestaurantImages();
+    const { updateImages } = useUpdateImages();
 
     const [formData, setFormData] = useState({
         name: "",
