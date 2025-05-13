@@ -33,6 +33,44 @@ export const getById = async (req, res) => {
 };
 
 /**
+ * PATCH /api/restaurants/:id/update-images
+ * Replaces restaurant image paths and deletes removed images from disk
+ */
+export const updateImages = async (req, res) => {
+    const { id } = req.params;
+    const newImagePaths = req.body; // array of image paths
+
+    try {
+        const restaurant = await restaurantService.getRestaurantById(id);
+
+        if (!restaurant) {
+            return res.status(404).json({ message: 'Restaurant not found.' });
+        }
+
+        const oldImagePaths = restaurant.images || [];
+
+        const removedPaths = oldImagePaths.filter(
+            (path) => !newImagePaths.includes(path)
+        );
+
+        await Promise.all(
+            removedPaths.map((imgPath) => {
+                const filename = imgPath.split('/').pop();
+                return fs.unlink(`uploads/${filename}`).catch(() => null);
+            })
+        );
+
+        const updatedRestaurant = await restaurantService.replaceImages(id, newImagePaths);
+
+        res.status(200).json(updatedRestaurant);
+    } catch (error) {
+        console.error('Failed to update restaurant images:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+/**
  * PATCH /api/restaurants/:id/upload-image
  * Uploads an image for a specific restaurant
  */
@@ -55,7 +93,7 @@ export const uploadImage = async (req, res) => {
 
         const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
 
-        const updatedRestaurant = await restaurantService.updateImages(id, imagePaths);
+        const updatedRestaurant = await restaurantService.addImages(id, imagePaths);
 
         res.status(200).json(updatedRestaurant);
     } catch (error) {
