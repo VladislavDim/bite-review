@@ -35,13 +35,11 @@ export const useUploadImages = () => {
     };
 };
 
-export const useUpdateRestaurantImages = () => {
+export const useUpdateImages = () => {
     const { request } = useAuth();
 
     const updateImages = async (restaurantId, images) => {
-        return request.patch(`${baseUrl}/${restaurantId}/update-images`, {
-            images,
-        });
+        return request.patch(`${baseUrl}/${restaurantId}/update-images`, images);
     };
 
     return {
@@ -88,14 +86,10 @@ export const useGetRestaurantById = () => {
 };
 
 export const useUpdateRestaurant = () => {
-    const { accessToken } = useContext(UserContext);
+    const { request } = useAuth();
 
     const updateRestaurant = async (id, updatedData) => {
-        return request.put(`${baseUrl}/${id}`, updatedData, {
-            headers: {
-                "X-Authorization": accessToken,
-            },
-        });
+        return request.put(`${baseUrl}/${id}`, updatedData);
     };
 
     return {
