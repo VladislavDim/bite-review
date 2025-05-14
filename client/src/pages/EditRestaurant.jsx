@@ -1,7 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useGetRestaurantById, useUpdateRestaurant, useUploadImages, useUpdateImages } from "../api/restaurantApi";
-import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES, MAX_IMAGE_SIZE_MB } from "../utils/image.validation";
+import {
+    useGetRestaurantById,
+    useUpdateRestaurant,
+    useUploadImages,
+    useUpdateImages,
+} from "../api/restaurantApi";
+import {
+    ALLOWED_IMAGE_TYPES,
+    MAX_IMAGE_SIZE_BYTES,
+    MAX_IMAGE_SIZE_MB,
+} from "../utils/image.validation";
 
 const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
@@ -22,7 +31,7 @@ export default function EditRestaurant() {
     });
 
     const [existingImages, setExistingImages] = useState([]);
-    const [newImages, setNewImages] = useState([]);
+    const [newImages, setNewImages] = useState([]); // Each { file, previewUrl }
     const [serverError, setServerError] = useState(null);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
@@ -79,9 +88,14 @@ export default function EditRestaurant() {
                 localError = `Each file must be smaller than ${MAX_IMAGE_SIZE_MB}MB`;
             } else {
                 const alreadyExists = newImages.find(
-                    (img) => img.name === file.name && img.size === file.size
+                    (imgObj) => imgObj.file.name === file.name && imgObj.file.size === file.size
                 );
-                if (!alreadyExists) newValidImages.push(file);
+                if (!alreadyExists) {
+                    newValidImages.push({
+                        file,
+                        previewUrl: URL.createObjectURL(file),
+                    });
+                }
             }
         });
 
@@ -100,6 +114,8 @@ export default function EditRestaurant() {
     };
 
     const removeNewImage = (indexToRemove) => {
+        // Clean up blob URL
+        URL.revokeObjectURL(newImages[indexToRemove].previewUrl);
         setNewImages((prev) => prev.filter((_, i) => i !== indexToRemove));
     };
 
@@ -123,7 +139,8 @@ export default function EditRestaurant() {
             await updateImages(id, existingImages);
 
             if (newImages.length > 0) {
-                await uploadImages(id, newImages);
+                const filesOnly = newImages.map((imgObj) => imgObj.file);
+                await uploadImages(id, filesOnly);
             }
 
             navigate(`/restaurants/${id}/details`);
@@ -146,7 +163,7 @@ export default function EditRestaurant() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className={`mt-1 block w-full border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
+                        className={`mt-1 block w-full border ${errors.name ? "border-red-500" : "border-gray-300"} rounded-lg p-2`}
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                 </div>
@@ -158,7 +175,7 @@ export default function EditRestaurant() {
                         name="location"
                         value={formData.location}
                         onChange={handleChange}
-                        className={`mt-1 block w-full border ${errors.location ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
+                        className={`mt-1 block w-full border ${errors.location ? "border-red-500" : "border-gray-300"} rounded-lg p-2`}
                     />
                     {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
                 </div>
@@ -171,7 +188,7 @@ export default function EditRestaurant() {
                         rows="4"
                         value={formData.description}
                         onChange={handleChange}
-                        className={`mt-1 block w-full border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2`}
+                        className={`mt-1 block w-full border ${errors.description ? "border-red-500" : "border-gray-300"} rounded-lg p-2`}
                     ></textarea>
                     {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                 </div>
@@ -191,7 +208,7 @@ export default function EditRestaurant() {
                     </label>
                 </div>
 
-                {/* Preview uploaded and new images */}
+                {/* Image previews */}
                 <div className="flex flex-wrap gap-4 mt-4">
                     {existingImages.map((img, index) => (
                         <div key={index} className="relative w-24 h-24 rounded overflow-hidden border border-orange-400 bg-gradient-to-r from-orange-300 to-orange-200 group">
@@ -205,9 +222,9 @@ export default function EditRestaurant() {
                             </button>
                         </div>
                     ))}
-                    {newImages.map((img, index) => (
+                    {newImages.map((imgObj, index) => (
                         <div key={index} className="relative w-24 h-24 rounded overflow-hidden border border-orange-400 bg-gradient-to-r from-orange-300 to-orange-200 group">
-                            <img src={URL.createObjectURL(img)} alt="new" className="w-full h-full object-cover transition-opacity group-hover:opacity-60" />
+                            <img src={imgObj.previewUrl} alt="new" className="w-full h-full object-cover transition-opacity group-hover:opacity-60" />
                             <button
                                 type="button"
                                 onClick={() => removeNewImage(index)}
@@ -226,7 +243,11 @@ export default function EditRestaurant() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Features</label>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-800">
-                        {["24h Open", "Outdoor Seating", "Pet Friendly", "Delivery", "Wheelchair Accessible", "Credit Card Payment", "Vegan Options", "Live Music", "Wi-Fi", "Parking", "Smoking Area", "Family Friendly"].map((feat) => (
+                        {[
+                            "24h Open", "Outdoor Seating", "Pet Friendly", "Delivery",
+                            "Wheelchair Accessible", "Credit Card Payment", "Vegan Options", "Live Music",
+                            "Wi-Fi", "Parking", "Smoking Area", "Family Friendly"
+                        ].map((feat) => (
                             <label key={feat}>
                                 <input
                                     type="checkbox"
