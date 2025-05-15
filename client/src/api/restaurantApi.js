@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import request from "../utils/request";
 import useAuth from "../hooks/useAuth";
 
@@ -7,9 +7,9 @@ const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/restaurants`;
 export const useCreateRestaurant = () => {
     const { request } = useAuth();
 
-    const createRestaurant = async (restaurantData) => {
+    const createRestaurant = useCallback(async (restaurantData) => {
         return request.post(`${baseUrl}`, restaurantData);
-    };
+    }, [request]);
 
     return {
         createRestaurant,
@@ -19,7 +19,7 @@ export const useCreateRestaurant = () => {
 export const useUploadImages = () => {
     const { request } = useAuth();
 
-    const uploadImages = async (restaurantId, images) => {
+    const uploadImages = useCallback(async (restaurantId, images) => {
         const formData = new FormData();
 
         images.forEach((file) => {
@@ -27,7 +27,7 @@ export const useUploadImages = () => {
         });
 
         return request.patch(`${baseUrl}/${restaurantId}/upload-image`, formData);
-    };
+    }, [request]);
 
     return {
         uploadImages,
@@ -37,9 +37,9 @@ export const useUploadImages = () => {
 export const useUpdateImages = () => {
     const { request } = useAuth();
 
-    const updateImages = async (restaurantId, images) => {
+    const updateImages = useCallback(async (restaurantId, images) => {
         return request.patch(`${baseUrl}/${restaurantId}/update-images`, images);
-    };
+    }, [request]);
 
     return {
         updateImages,
@@ -75,9 +75,9 @@ export const useGetAllRestaurants = () => {
 };
 
 export const useGetRestaurantById = () => {
-    const getById = async (id) => {
+    const getById = useCallback(async (id) => {
         return request.get(`${baseUrl}/${id}`);
-    };
+    }, []);
 
     return {
         getById,
@@ -87,9 +87,9 @@ export const useGetRestaurantById = () => {
 export const useUpdateRestaurant = () => {
     const { request } = useAuth();
 
-    const updateRestaurant = async (id, updatedData) => {
+    const updateRestaurant = useCallback(async (id, updatedData) => {
         return request.put(`${baseUrl}/${id}`, updatedData);
-    };
+    }, [request]);
 
     return {
         updateRestaurant,
@@ -99,9 +99,9 @@ export const useUpdateRestaurant = () => {
 export const useDeleteRestaurant = () => {
     const { request } = useAuth();
 
-    const deleteRestaurant = async (id) => {
+    const deleteRestaurant = useCallback(async (id) => {
         return request.delete(`${baseUrl}/${id}`);
-    };
+    }, [request]);
 
     return {
         deleteRestaurant,
