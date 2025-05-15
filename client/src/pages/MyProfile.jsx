@@ -30,7 +30,7 @@ export default function MyProfile() {
                 setProfile(fetchedProfile);
 
                 const allReviews = await getAllReviews();
-                const myRestaurants = restaurants.filter(r => r.ownerId?._id === userId);
+                const myRestaurants = restaurants.filter(r => r.owner?._id === userId);
 
                 if (!myRestaurants.length) {
                     setReviewsReceived([]);
@@ -40,16 +40,9 @@ export default function MyProfile() {
                 const myRestaurantIds = myRestaurants.map(r => r._id);
 
                 const received = allReviews
-                    .filter(r => myRestaurantIds.includes(r.restaurantId))
-                    .map(review => {
-                        const restaurant = restaurants.find(r => r._id === review.restaurantId);
-                        return {
-                            ...review,
-                            restaurantName: restaurant?.name || "Restaurant",
-                            restaurantId: restaurant?._id,
-                        };
-                    });
+                    .filter(r => myRestaurantIds.includes(r.restaurant?._id));
 
+                console.log(received);
                 setReviewsReceived(received);
             } catch (error) {
                 console.error('Failed to fetch profile or reviews:', error);
@@ -136,12 +129,14 @@ export default function MyProfile() {
                 <div className="space-y-4">
                     {currentReviews.map((rev, i) => (
                         <Link
-                            to={`/restaurants/${rev.restaurantId}/details`}
+                            to={`/restaurants/${rev.restaurant._id}/details`}
                             key={i}
                             className="block bg-white border p-4 rounded-lg shadow-sm hover:shadow-md transition"
                         >
                             <div className="flex justify-between items-center mb-1">
-                                <h3 className="font-medium text-gray-800">{rev.restaurantName}</h3>
+                                <h3 className="font-medium text-gray-800">
+                                {rev.restaurant?.name || "Unknown Restaurant"}
+                                </h3>
                                 <StarRatingDisplay rating={rev.rating} size={18} />
                             </div>
                             <p className="text-sm text-gray-700">{rev.comment}</p>
