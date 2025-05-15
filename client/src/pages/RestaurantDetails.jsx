@@ -47,7 +47,13 @@ export default function RestaurantDetails() {
         }
 
         fetchData();
-    }, [id, sortOption]);
+        
+    }, [id,
+        sortOption,
+        navigate,
+        getById,
+        getReviews
+    ]);
 
     useEffect(() => {
         if (restaurant?.images?.length > 0 && !imagesPreloaded) {
