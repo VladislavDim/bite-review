@@ -30,13 +30,17 @@ const reviewSchema = new mongoose.Schema(
 
 reviewSchema.set("toJSON", {
     virtuals: true,
+    versionKey: false,
     transform: (_, ret) => {
-        if (ret.createdAt) {
-            ret.timestamp = new Date(ret.createdAt).getTime(); // 👈 милисекунди от createdAt
-        }
-        return ret;
+      delete ret.id;
+  
+      if (ret.createdAt) {
+        ret.timestamp = new Date(ret.createdAt).getTime();
+      }
+  
+      return ret;
     },
-});
+  });
 
 const Review = mongoose.model('Review', reviewSchema);
 
