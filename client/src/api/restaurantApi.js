@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import request from "../utils/request";
-import { UserContext } from "../contexts/UserContext";
 import useAuth from "../hooks/useAuth";
 
 const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/api/restaurants`;
