@@ -44,5 +44,6 @@ export const getReviews = async (restaurantId = null) => {
 
     return await Review.find(filter)
         .populate("user", "username")
+        .populate("restaurant", "name")
         .sort({ createdAt: -1 });
 };
