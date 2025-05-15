@@ -13,7 +13,7 @@ export default function RestaurantDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { getById } = useGetRestaurantById();
-    const { getAll: getReviews } = useGetReviewsByRestaurantId();
+    const { getReviewsByRestaurantId: getReviews } = useGetReviewsByRestaurantId();
     const { create: createReview } = useCreateReview();
     const { username, _id: userId, accessToken } = useContext(UserContext);
 
