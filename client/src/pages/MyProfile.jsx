@@ -42,7 +42,6 @@ export default function MyProfile() {
                 const received = allReviews
                     .filter(r => myRestaurantIds.includes(r.restaurant?._id));
 
-                console.log(received);
                 setReviewsReceived(received);
             } catch (error) {
                 console.error('Failed to fetch profile or reviews:', error);
@@ -52,7 +51,7 @@ export default function MyProfile() {
         };
 
         fetchProfileAndReviews();
-    }, [userId, restaurants]);
+    }, [userId, restaurants, getAllReviews, getUser]);
 
     if (loading) {
         return <p className="text-center text-gray-500 py-10">Loading profile...</p>;
@@ -135,7 +134,7 @@ export default function MyProfile() {
                         >
                             <div className="flex justify-between items-center mb-1">
                                 <h3 className="font-medium text-gray-800">
-                                {rev.restaurant?.name || "Unknown Restaurant"}
+                                    {rev.restaurant?.name || "Unknown Restaurant"}
                                 </h3>
                                 <StarRatingDisplay rating={rev.rating} size={18} />
                             </div>
