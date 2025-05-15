@@ -13,10 +13,10 @@ export const useCreateReview = () => {
 };
 
 export const useGetReviewsByRestaurantId = () => {
-    const getAll = async (restaurantId) => {
+    const getReviewsByRestaurantId = async (restaurantId) => {
         return request.get(`${baseUrl}/${restaurantId}`);
     };
-    return { getAll };
+    return { getReviewsByRestaurantId };
 };
 
 export const useGetAllReviews = () => {
