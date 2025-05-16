@@ -26,6 +26,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import LogoutRegistrar from './init/logoutRegister'
 
 import './App.css'
+import EditProfile from './pages/EditProfile'
 
 
 function App() {
@@ -50,10 +51,11 @@ function App() {
 
             <Route element={<AuthGuard />}>
               <Route path="/profile" element={<MyProfile />} />
+              <Route path="/profile/edit" element={<EditProfile />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/add-restaurant" element={<AddRestaurant />} />
               <Route path="/my-restaurants" element={<MyRestaurants />} />
-              <Route path="/restaurants/:id/edit" element={<EditRestaurant />} />
+              <Route path="/restaurants/:id/edit" element={<EditRestaurant />} />      
             </Route>
 
             <Route path="/about" element={<About />} />
