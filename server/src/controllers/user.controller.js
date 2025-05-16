@@ -1,5 +1,4 @@
 import {
-    createUser,
     getAllUsers,
     getUserById
 } from '../services/user.service.js';
@@ -14,19 +13,6 @@ export const getAll = async (req, res) => {
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch users' });
-    }
-};
-
-/**
- * POST /api/users
- * Creates a new user
- */
-export const create = async (req, res) => {
-    try {
-        const newUser = await createUser(req.body);
-        res.status(201).json(newUser);
-    } catch (error) {
-        res.status(400).json({ message: 'Failed to create user' });
     }
 };
 
