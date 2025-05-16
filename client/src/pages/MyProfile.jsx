@@ -90,10 +90,13 @@ export default function MyProfile() {
 
                 {/* Buttons */}
                 <div className="flex flex-col md:flex-row gap-3 md:gap-4">
-                    <button className="flex items-center gap-2 border-2 border-[#E9762B] text-[#E9762B] px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#E9762B] hover:to-[#f79d4d] hover:text-white transition">
+                    <Link
+                        to="/profile/edit"
+                        className="flex items-center gap-2 border-2 border-[#E9762B] text-[#E9762B] px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#E9762B] hover:to-[#f79d4d] hover:text-white transition"
+                    >
                         <FaUserEdit />
                         Edit Profile
-                    </button>
+                    </Link>
 
                     <button
                         onClick={() => navigate("/logout")}
