@@ -1,6 +1,7 @@
 import * as restaurantService from '../services/restaurant.service.js';
 import fs from 'fs/promises';
 import paths from '../utils/paths.js';
+import { deleteImage } from '../utils/deleteImage.js';
 
 /**
  * GET /api/restaurants
@@ -58,6 +59,7 @@ export const updateImages = async (req, res) => {
             removedPaths.map((imgPath) => {
                 const filename = imgPath.split('/').pop();
                 const fullPath = `${paths.restaurantUploads}/${filename}`;
+                return deleteImage(fullPath);
             })
         );
 
@@ -87,7 +89,9 @@ export const uploadImage = async (req, res) => {
 
         if (!restaurant) {
             await Promise.all(
-                req.files.map(file => fs.unlink(`uploads/${file.filename}`))
+                req.files.map(file =>
+                    deleteImage(`${paths.restaurantUploads}/${file.filename}`)
+                )
             );
             return res.status(404).json({ message: 'Restaurant not found.' });
         }
@@ -102,7 +106,9 @@ export const uploadImage = async (req, res) => {
 
         if (req.files) {
             await Promise.all(
-                req.files.map(file => fs.unlink(`uploads/${file.filename}`))
+                req.files.map(file =>
+                    deleteImage(`${paths.restaurantUploads}/${file.filename}`)
+                )
             );
         }
 
