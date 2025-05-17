@@ -1,5 +1,6 @@
 import * as restaurantService from '../services/restaurant.service.js';
 import fs from 'fs/promises';
+import paths from '../utils/paths.js';
 
 /**
  * GET /api/restaurants
@@ -38,7 +39,7 @@ export const getById = async (req, res) => {
  */
 export const updateImages = async (req, res) => {
     const { id } = req.params;
-    const newImagePaths = req.body; // array of image paths
+    const newImagePaths = req.body; // array of image paths (e.g. /uploads/restaurants/abc.jpg)
 
     try {
         const restaurant = await restaurantService.getRestaurantById(id);
@@ -56,7 +57,7 @@ export const updateImages = async (req, res) => {
         await Promise.all(
             removedPaths.map((imgPath) => {
                 const filename = imgPath.split('/').pop();
-                return fs.unlink(`uploads/${filename}`).catch(() => null);
+                const fullPath = `${paths.restaurantUploads}/${filename}`;
             })
         );
 
@@ -91,7 +92,7 @@ export const uploadImage = async (req, res) => {
             return res.status(404).json({ message: 'Restaurant not found.' });
         }
 
-        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+        const imagePaths = req.files.map(file => `${paths.restaurantUploadsUrl}/${file.filename}`);
 
         const updatedRestaurant = await restaurantService.addImages(id, imagePaths);
 
