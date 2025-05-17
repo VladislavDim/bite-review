@@ -10,7 +10,7 @@ import {
 } from '../utils/image.rules.js';
 
 // Ensure uploads/ directory exists
-const uploadDir = 'uploads/';
+const uploadDir = 'uploads/restaurants';
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
