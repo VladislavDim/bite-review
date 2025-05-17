@@ -72,7 +72,6 @@ export const updateImages = async (req, res) => {
     }
 };
 
-
 /**
  * PATCH /api/restaurants/:id/upload-image
  * Uploads an image for a specific restaurant
