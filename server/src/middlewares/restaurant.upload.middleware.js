@@ -1,19 +1,19 @@
-import path from 'path';
-import {
-    MAX_IMAGE_SIZE_BYTES,
-    isValidImageExtension,
-    isValidImageMimetype,
-}
-    from '../utils/image.rules.js';
-import { createUploadMiddleware } from './upload.factory.middleware.js';
 import paths from '../utils/paths.js';
+import { createUploadMiddleware } from './upload.factory.middleware.js';
+import {
+    isValidImageFile,
+    ALLOWED_IMAGE_TYPES,
+    MAX_IMAGE_SIZE_BYTES,
+} from '../utils/image.rules.js';
 
 const restaurantFileFilter = (_, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (isValidImageExtension(ext) && isValidImageMimetype(file.mimetype)) {
+    if (isValidImageFile(file, ALLOWED_IMAGE_TYPES)) {
         cb(null, true);
     } else {
-        cb(new Error(`Only image files are allowed (${ALLOWED_IMAGE_EXTENSIONS.join(', ')})`), false);
+        cb(
+            new Error(`Only image types are allowed: ${ALLOWED_IMAGE_TYPES.join(', ')}`),
+            false
+        );
     }
 };
 
