@@ -1,15 +1,19 @@
+import paths from '../utils/paths.js';
+import { createUploadMiddleware } from './upload.factory.middleware.js';
 import {
+    isValidImageFile,
     ALLOWED_AVATAR_IMAGE_TYPES,
     MAX_AVATAR_IMAGE_SIZE_BYTES,
-} from '../utils/image.validation.js';
-import { createUploadMiddleware } from './createUploadMiddleware.js';
-import paths from '../utils/paths.js';
+} from '../utils/image.rules.js';
 
 const avatarFileFilter = (_, file, cb) => {
-    if (ALLOWED_AVATAR_IMAGE_TYPES.includes(file.mimetype)) {
+    if (isValidImageFile(file, ALLOWED_AVATAR_IMAGE_TYPES)) {
         cb(null, true);
     } else {
-        cb(new Error(`Only avatar image types are allowed (${ALLOWED_AVATAR_IMAGE_TYPES.join(', ')})`), false);
+        cb(
+            new Error(`Only avatar image types are allowed: ${ALLOWED_AVATAR_IMAGE_TYPES.join(', ')}`),
+            false
+        );
     }
 };
 
