@@ -1,4 +1,8 @@
-import { registerUser, loginUser, logoutUser } from '../services/auth.service.js';
+import {
+    registerUser,
+    loginUser,
+    logoutUser
+} from '../services/auth.service.js';
 
 /**
  * POST /api/auth/register
