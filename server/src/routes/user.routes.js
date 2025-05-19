@@ -5,8 +5,7 @@ import {
     getAll,
     findById,
     updateProfile,
-}
-    from '../controllers/user.controller.js';
+} from '../controllers/user.controller.js';
 
 const router = express.Router();
 
