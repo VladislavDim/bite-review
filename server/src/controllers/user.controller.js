@@ -35,7 +35,7 @@ export const findById = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     const userId = req.user._id;
-    const { username, email, oldPassword, newPassword, confirmPassword } = req.body;
+    const { username, email, oldPassword, newPassword } = req.body;
 
     try {
         const user = await getUserById(userId);
@@ -65,11 +65,12 @@ export const updateProfile = async (req, res) => {
         }
 
         // 3. Update password if all required fields are valid
-        if (oldPassword && newPassword && confirmPassword) {
-            if (newPassword !== confirmPassword) {
-                return res.status(400).json({ message: 'New passwords do not match' });
+        if (oldPassword && newPassword) {
+            try {
+                await updateUserPassword(userId, oldPassword, newPassword);
+            } catch (err) {
+                return res.status(400).json({ message: err.message });
             }
-            await updateUserPassword(userId, oldPassword, newPassword);
         }
 
         res.status(200).json({ message: 'Profile updated successfully' });
