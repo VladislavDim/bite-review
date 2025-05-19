@@ -1,4 +1,7 @@
-import { createReviewForRestaurant, getReviews } from '../services/review.service.js';
+import {
+    createReviewForRestaurant,
+    getReviews
+} from '../services/review.service.js';
 
 /**
  * POST /api/reviews
