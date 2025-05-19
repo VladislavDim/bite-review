@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUserContext } from "../contexts/UserContext";
-import { useGetUserById } from "../api/userApi";
+import { useGetUserById, useUpdateUserProfile } from "../api/userApi";
 import { FaSave, FaArrowLeft, FaUpload } from "react-icons/fa";
-import request from "../utils/request";
 import {
     ALLOWED_AVATAR_IMAGE_TYPES,
     MAX_AVATAR_IMAGE_SIZE_BYTES,
@@ -11,7 +10,8 @@ import {
     MAX_AVATAR_IMAGE_HEIGHT,
     MIN_AVATAR_IMAGE_WIDTH,
     MIN_AVATAR_IMAGE_HEIGHT
-} from "../utils/image.validation";
+}
+    from "../utils/image.validation";
 
 const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
@@ -19,6 +19,7 @@ export default function EditProfile() {
     const navigate = useNavigate();
     const { _id: userId } = useUserContext();
     const { getUser } = useGetUserById();
+    const { updateUserProfile } = useUpdateUserProfile();
 
     const [formData, setFormData] = useState({
         username: "",
@@ -29,6 +30,7 @@ export default function EditProfile() {
         confirmPassword: ""
     });
 
+    const [initialData, setInitialData] = useState({});
     const [errors, setErrors] = useState({});
     const [previewAvatar, setPreviewAvatar] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -42,6 +44,10 @@ export default function EditProfile() {
                     username: user.username || "",
                     email: user.email || "",
                 }));
+                setInitialData({
+                    username: user.username || "",
+                    email: user.email || "",
+                });
                 setPreviewAvatar(user.avatar ? `${baseUrl}${user.avatar}` : null);
             } catch (err) {
                 console.error("Failed to load user:", err);
@@ -116,13 +122,25 @@ export default function EditProfile() {
 
         try {
             const formToSend = new FormData();
-            formToSend.append("username", formData.username);
-            formToSend.append("email", formData.email);
-            if (formData.oldPassword) formToSend.append("oldPassword", formData.oldPassword);
-            if (formData.newPassword) formToSend.append("newPassword", formData.newPassword);
-            if (formData.avatar) formToSend.append("avatar", formData.avatar);
 
-            await request.put(`${baseUrl}/api/users/${userId}`, formToSend);
+            if (formData.username !== initialData.username) {
+                formToSend.append("username", formData.username);
+            }
+
+            if (formData.email !== initialData.email) {
+                formToSend.append("email", formData.email);
+            }
+
+            if (formData.oldPassword && formData.newPassword && formData.newPassword === formData.confirmPassword) {
+                formToSend.append("oldPassword", formData.oldPassword);
+                formToSend.append("newPassword", formData.newPassword);
+            }
+
+            if (formData.avatar) {
+                formToSend.append("avatar", formData.avatar);
+            }
+
+            await updateUserProfile(formToSend);
             navigate("/profile");
         } catch (err) {
             console.error("Failed to update profile:", err);
@@ -161,7 +179,7 @@ export default function EditProfile() {
                         <label
                             htmlFor="avatar"
                             className="cursor-pointer px-2 py-1 text-xs border border-[#E9762B] text-[#E9762B] rounded font-medium hover:bg-gradient-to-r hover:from-[#E9762B] hover:to-[#f79d4d] hover:text-white transition flex items-center gap-1 max-w-[120px]"
-                            >
+                        >
 
                             <FaUpload className="text-sm" /> Choose File
                         </label>
