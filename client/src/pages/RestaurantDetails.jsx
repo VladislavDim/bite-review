@@ -111,11 +111,6 @@ export default function RestaurantDetails() {
         }
     };
 
-    const averageRating =
-        reviews.length > 0
-            ? reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length
-            : 0;
-
     const handleReviewSubmit = async () => {
         if (newReview && newRating > 0) {
             setReviewError(null);
@@ -224,7 +219,7 @@ export default function RestaurantDetails() {
                 <h1 className="text-3xl font-bold text-[#E9762B]">{restaurant.name}</h1>
                 <div className="flex items-center gap-2 mt-2 text-gray-600">
                     <FaStar className="text-yellow-400" />
-                    <span className="font-medium">{averageRating.toFixed(1)} / 5</span>
+                    <span className="font-medium">{restaurant.averageRating.toFixed(1)} / 5</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
                     <FaMapMarkerAlt />
