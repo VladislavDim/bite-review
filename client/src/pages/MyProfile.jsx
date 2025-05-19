@@ -7,6 +7,8 @@ import { useGetAllReviews } from "../api/reviewApi";
 import { useGetAllRestaurants } from "../api/restaurantApi";
 import StarRatingDisplay from "../components/ui/StarRatingDisplay";
 
+const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
+
 export default function MyProfile() {
     const navigate = useNavigate();
     const { _id: userId } = useUserContext();
@@ -75,9 +77,17 @@ export default function MyProfile() {
             {/* Header */}
             <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
                 {/* Avatar */}
-                <div className="w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center text-4xl font-bold text-[#E9762B]">
-                    {profile.username?.[0] || "?"}
-                </div>
+                {profile.avatar ? (
+                    <img
+                        src={`${baseUrl}${profile.avatar}`}
+                        alt="User Avatar"
+                        className="w-28 h-28 object-cover rounded-full shadow"
+                    />
+                ) : (
+                    <div className="w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center text-4xl font-bold text-[#E9762B]">
+                        {profile.username?.[0] || "?"}
+                    </div>
+                )}
 
                 {/* Info */}
                 <div className="flex-1">
