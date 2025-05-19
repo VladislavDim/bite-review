@@ -107,7 +107,7 @@ export default function Hero() {
                         )}
 
                         <p className="carousel-rating">
-                            ⭐ {(ratingsMap[r._id] || 0).toFixed(1)}
+                            ⭐ {(r.averageRating || 0).toFixed(1)}
                         </p>
                     </div>
                 </Link>
