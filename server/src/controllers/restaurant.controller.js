@@ -1,5 +1,4 @@
 import * as restaurantService from '../services/restaurant.service.js';
-import fs from 'fs/promises';
 import paths from '../utils/paths.js';
 import { deleteImage } from '../utils/deleteImage.js';
 
