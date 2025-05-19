@@ -9,9 +9,8 @@ import {
     MAX_AVATAR_IMAGE_WIDTH,
     MAX_AVATAR_IMAGE_HEIGHT,
     MIN_AVATAR_IMAGE_WIDTH,
-    MIN_AVATAR_IMAGE_HEIGHT
-}
-    from "../utils/image.validation";
+    MIN_AVATAR_IMAGE_HEIGHT,
+} from "../utils/image.validation";
 
 const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
@@ -27,7 +26,7 @@ export default function EditProfile() {
         avatar: null,
         oldPassword: "",
         newPassword: "",
-        confirmPassword: ""
+        confirmPassword: "",
     });
 
     const [initialData, setInitialData] = useState({});
@@ -47,6 +46,7 @@ export default function EditProfile() {
                 setInitialData({
                     username: user.username || "",
                     email: user.email || "",
+                    avatar: user.avatar || null,
                 });
                 setPreviewAvatar(user.avatar ? `${baseUrl}${user.avatar}` : null);
             } catch (err) {
@@ -60,14 +60,22 @@ export default function EditProfile() {
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
+        const validationErrors = {};
+
         if (files) {
             const file = files[0];
+            if (!file) return;
 
-            const validationErrors = {};
             if (!ALLOWED_AVATAR_IMAGE_TYPES.includes(file.type)) {
-                validationErrors.avatar = "Unsupported file type.";
-            } else if (file.size > MAX_AVATAR_IMAGE_SIZE_BYTES) {
+                validationErrors.avatar = "Only image files are allowed (jpg, jpeg, png, webp)";
+                setErrors((prev) => ({ ...prev, ...validationErrors }));
+                return;
+            }
+
+            if (file.size > MAX_AVATAR_IMAGE_SIZE_BYTES) {
                 validationErrors.avatar = "Image exceeds maximum size of 1MB.";
+                setErrors((prev) => ({ ...prev, ...validationErrors }));
+                return;
             }
 
             const reader = new FileReader();
@@ -93,6 +101,7 @@ export default function EditProfile() {
 
                     setFormData((prev) => ({ ...prev, [name]: file }));
                     setPreviewAvatar(event.target.result);
+                    setErrors((prev) => ({ ...prev, avatar: null }));
                 };
                 img.src = event.target.result;
             };
@@ -120,6 +129,17 @@ export default function EditProfile() {
         setErrors(validationErrors);
         if (Object.keys(validationErrors).length > 0) return;
 
+        const hasChanges =
+            formData.username !== initialData.username ||
+            formData.email !== initialData.email ||
+            formData.avatar !== null ||
+            (formData.newPassword && formData.oldPassword);
+
+        if (!hasChanges) {
+            console.log("No changes to submit");
+            return;
+        }
+
         try {
             const formToSend = new FormData();
 
@@ -131,7 +151,7 @@ export default function EditProfile() {
                 formToSend.append("email", formData.email);
             }
 
-            if (formData.oldPassword && formData.newPassword && formData.newPassword === formData.confirmPassword) {
+            if (formData.oldPassword && formData.newPassword) {
                 formToSend.append("oldPassword", formData.oldPassword);
                 formToSend.append("newPassword", formData.newPassword);
             }
@@ -140,14 +160,23 @@ export default function EditProfile() {
                 formToSend.append("avatar", formData.avatar);
             }
 
-            await updateUserProfile(formToSend);
-            navigate("/profile");
+            try {
+                await updateUserProfile(formToSend);
+                navigate("/profile");
+
+            } catch (err) {
+                const message = err?.message || "Something went wrong";
+                setErrors((prev) => ({ ...prev, oldPassword: message }));
+            }
+
         } catch (err) {
             console.error("Failed to update profile:", err);
         }
     };
 
-    if (loading) return <p className="text-center py-10 text-gray-500">Loading profile...</p>;
+    if (loading) {
+        return <p className="text-center py-10 text-gray-500">Loading profile...</p>;
+    }
 
     return (
         <section className="max-w-xl mx-auto px-4 py-10">
@@ -162,6 +191,7 @@ export default function EditProfile() {
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-6" noValidate>
+                {/* Avatar */}
                 <div className="flex items-center gap-4">
                     {previewAvatar ? (
                         <img
@@ -180,7 +210,6 @@ export default function EditProfile() {
                             htmlFor="avatar"
                             className="cursor-pointer px-2 py-1 text-xs border border-[#E9762B] text-[#E9762B] rounded font-medium hover:bg-gradient-to-r hover:from-[#E9762B] hover:to-[#f79d4d] hover:text-white transition flex items-center gap-1 max-w-[120px]"
                         >
-
                             <FaUpload className="text-sm" /> Choose File
                         </label>
                         <input
@@ -195,6 +224,7 @@ export default function EditProfile() {
                     </div>
                 </div>
 
+                {/* Username */}
                 <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">Username</label>
                     <input
@@ -202,11 +232,12 @@ export default function EditProfile() {
                         name="username"
                         value={formData.username}
                         onChange={handleChange}
-                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.username ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-400'}`}
+                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.username ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-orange-400"}`}
                     />
                     {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username}</p>}
                 </div>
 
+                {/* Email */}
                 <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
                     <input
@@ -214,11 +245,12 @@ export default function EditProfile() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-400'}`}
+                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-orange-400"}`}
                     />
                     {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
                 </div>
 
+                {/* Password fields */}
                 <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">Current Password</label>
                     <input
@@ -226,7 +258,7 @@ export default function EditProfile() {
                         name="oldPassword"
                         value={formData.oldPassword}
                         onChange={handleChange}
-                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.oldPassword ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-400'}`}
+                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.oldPassword ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-orange-400"}`}
                         placeholder="Required to update password"
                     />
                     {errors.oldPassword && <p className="text-sm text-red-500 mt-1">{errors.oldPassword}</p>}
@@ -250,7 +282,7 @@ export default function EditProfile() {
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
-                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-400'}`}
+                        className={`w-full border px-4 py-2 rounded focus:outline-none focus:ring-1 ${errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-orange-400"}`}
                     />
                     {errors.confirmPassword && <p className="text-sm text-red-500 mt-1">{errors.confirmPassword}</p>}
                 </div>
