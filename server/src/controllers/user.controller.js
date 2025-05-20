@@ -73,12 +73,25 @@ export const updateProfile = async (req, res) => {
             }
         }
 
-        res.status(200).json({ message: 'Profile updated successfully' });
+        res.status(200).json({
+            message: 'Profile updated successfully',
+            user: {
+                _id: user._id,
+                username: updates.username || user.username,
+                email: updates.email || user.email,
+                avatar: req.file
+                    ? `${paths.avatarUploadsUrl}/${req.file.filename}`
+                    : user.avatar,
+            },
+        });
+
     } catch (error) {
         console.error('Profile update failed:', error);
+
         if (req.file) {
             await deleteImage(`${paths.avatarUploads}/${req.file.filename}`);
         }
+
         res.status(500).json({ message: 'Internal server error' });
     }
 };
