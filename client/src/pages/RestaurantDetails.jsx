@@ -181,51 +181,62 @@ export default function RestaurantDetails() {
                         )}
                     </div>
 
-                    {/* Close Button – top right */}
+                    {/* Close Button – positioned relative to screen */}
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
                             setShowLightbox(false);
                         }}
-                        className="absolute top-5 right-5 text-white text-3xl font-bold hover:scale-125 transition-transform duration-200"
+                        className="absolute top-5 right-5 text-white text-3xl font-bold hover:scale-150 transition-transform duration-200"
                         aria-label="Close lightbox"
                     >
                         ×
                     </button>
 
-                    {/* Left Arrow */}
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setLightboxIndex(
-                                lightboxIndex === 0
-                                    ? restaurant.images.length - 1
-                                    : lightboxIndex - 1
-                            );
-                        }}
-                        className="absolute left-6 top-1/2 transform -translate-y-1/2 text-white text-5xl font-bold cursor-pointer select-none"
-                    >
-                        ❮
-                    </button>
+                    {/* Navigation arrows – positioned relative to screen */}
+                    {hasImages && restaurant.images.length > 1 && (
+                        <>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setLightboxIndex(
+                                        lightboxIndex === 0
+                                            ? restaurant.images.length - 1
+                                            : lightboxIndex - 1
+                                    );
+                                }}
+                                className="
+                                    absolute left-6 top-1/2 -translate-y-1/2
+                                    text-white text-5xl font-bold
+                                    cursor-pointer select-none
+                                    hover:scale-125 transition-transform duration-200
+                                "
+                            >
+                                ❮
+                            </button>
 
-                    {/* Right Arrow */}
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setLightboxIndex(
-                                lightboxIndex === restaurant.images.length - 1
-                                    ? 0
-                                    : lightboxIndex + 1
-                            );
-                        }}
-                        className="absolute right-6 top-1/2 transform -translate-y-1/2 text-white text-5xl font-bold cursor-pointer select-none"
-                    >
-                        ❯
-                    </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setLightboxIndex(
+                                        lightboxIndex === restaurant.images.length - 1
+                                            ? 0
+                                            : lightboxIndex + 1
+                                    );
+                                }}
+                                className="
+                                    absolute right-6 top-1/2 -translate-y-1/2
+                                    text-white text-5xl font-bold
+                                    cursor-pointer select-none
+                                    hover:scale-125 transition-transform duration-200
+                                "
+                            >
+                                ❯
+                            </button>
+                        </>
+                    )}
                 </div>
-
             )}
-
 
             <div className="mb-6">
                 <h1 className="text-3xl font-bold text-[#E9762B]">{restaurant.name}</h1>
