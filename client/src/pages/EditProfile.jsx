@@ -16,7 +16,13 @@ const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
 export default function EditProfile() {
     const navigate = useNavigate();
-    const { _id: userId } = useUserContext();
+    const {
+        _id: userId,
+        username: currentUsername,
+        email: currentEmail,
+        token,
+        userLoginHandler,
+    } = useUserContext();
     const { getUser } = useGetUserById();
     const { updateUserProfile } = useUpdateUserProfile();
 
@@ -161,7 +167,17 @@ export default function EditProfile() {
             }
 
             try {
-                await updateUserProfile(formToSend);
+                const result = await updateUserProfile(formToSend);
+                console.log(token);
+                const updatedUser = {
+                    _id: userId,
+                    username: result.user.username || currentUsername,
+                    email: result.user.email || currentEmail,
+                    avatar: result.user.avatar,
+                    token: token,
+                };
+                userLoginHandler(updatedUser);
+
                 navigate("/profile");
 
             } catch (err) {
