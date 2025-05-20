@@ -47,7 +47,7 @@ export default function RestaurantDetails() {
         }
 
         fetchData();
-        
+
     }, [id,
         sortOption,
         navigate,
@@ -161,12 +161,24 @@ export default function RestaurantDetails() {
                     style={{ backgroundColor: "rgba(0, 0, 0, 0.85)" }}
                     onClick={() => setShowLightbox(false)}
                 >
+                    {/* Main content (image or fallback) */}
                     <div onClick={(e) => e.stopPropagation()}>
-                        <img
-                            src={`${baseUrl}${restaurant.images[lightboxIndex]}`}
-                            alt="Full"
-                            className="max-w-4xl max-h-[90vh] rounded-lg shadow-lg"
-                        />
+                        {hasImages ? (
+                            <img
+                                src={`${baseUrl}${restaurant.images[lightboxIndex]}`}
+                                alt="Full"
+                                className="max-w-4xl max-h-[90vh] rounded-lg shadow-lg"
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-white p-10">
+                                <img
+                                    src={`${baseUrl}/public/no-image-available.png`}
+                                    alt="No available"
+                                    className="max-w-md max-h-[60vh] rounded-lg mb-4"
+                                />
+                                <p className="text-lg font-semibold">No images available</p>
+                            </div>
+                        )}
                     </div>
 
                     {/* Close Button – top right */}
