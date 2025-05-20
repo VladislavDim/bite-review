@@ -25,17 +25,17 @@ export default function MyRestaurants() {
     const ownedRestaurants = restaurantList.filter(r => r.owner._id === userId);
 
     const handleDelete = async (id) => {
-        setConfirmingId(null);                    
-        setShowDeletedMessageId(id);             
+        setConfirmingId(null);
+        setShowDeletedMessageId(id);
 
         setTimeout(() => {
-            setDeletingId(id);                  
+            setDeletingId(id);
         }, 2000);
 
         setTimeout(async () => {
             try {
-                await deleteRestaurant(id);      
-                setRestaurantList((prev) => prev.filter((r) => r._id !== id)); 
+                await deleteRestaurant(id);
+                setRestaurantList((prev) => prev.filter((r) => r._id !== id));
             } catch (err) {
                 console.error("Failed to delete restaurant:", err);
             } finally {
@@ -67,18 +67,17 @@ export default function MyRestaurants() {
                     {ownedRestaurants.map((r) => (
                         <div
                             key={r._id}
-                            className={`relative bg-white rounded-lg shadow p-4 transition-all duration-700 ${
-                                deletingId === r._id ? "bg-red-100 blur-sm scale-95 opacity-50" : ""
-                            }`}
+                            className={`relative bg-white rounded-lg shadow p-4 transition-all duration-700 ${deletingId === r._id ? "bg-red-100 blur-sm scale-95 opacity-50" : ""
+                                }`}
                         >
-                         
+
                             {showDeletedMessageId === r._id && (
                                 <div className="absolute inset-0 flex items-center justify-center text-red-600 font-semibold text-lg bg-white/70 backdrop-blur-sm z-10">
                                     Deleted successfully
                                 </div>
                             )}
 
-                           
+
                             {confirmingId === r._id && (
                                 <div className="absolute inset-0 z-20 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center text-center rounded-lg">
                                     <p className="text-lg font-semibold text-red-600 mb-4">Are you sure you want to delete this restaurant?</p>
@@ -100,7 +99,11 @@ export default function MyRestaurants() {
                             )}
 
                             <img
-                                src={`${baseUrl}${r.images?.[0]}`}
+                                src={
+                                    r.images.length > 0
+                                        ? `${baseUrl}${r.images?.[0]}`
+                                        : `${baseUrl}/public/no-image-available.png`
+                                }
                                 alt={r.name}
                                 className="w-full h-40 object-cover rounded-md mb-3"
                             />
