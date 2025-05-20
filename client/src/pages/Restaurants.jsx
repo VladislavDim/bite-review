@@ -1,67 +1,33 @@
-import { useContext, useMemo, useState, useEffect, useRef } from "react";
-import {
-    FaUsers,
-    FaListUl,
-    FaUtensils,
-} from "react-icons/fa";
+import { useContext, useMemo, useState, useRef } from "react";
+import { Link } from "react-router";
+import { FaUsers, FaListUl, FaUtensils } from "react-icons/fa";
+
 import { useGetAllRestaurants } from "../api/restaurantApi";
-import { useGetAllReviews } from "../api/reviewApi";
+import { UserContext } from "../contexts/UserContext";
+
 import RestaurantCard from "../components/restaurant-card/RestaurantCard";
 import ScrollToTop from "../components/ui/ScrollToTop";
-import { UserContext } from "../contexts/UserContext";
-import { Link } from "react-router";
 
 const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
 export default function Restaurants() {
     const ITEMS_PER_LOAD = 10;
+
     const { _id: userId } = useContext(UserContext);
     const isGuest = !userId;
 
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
     const [filter, setFilter] = useState("all");
     const [sort, setSort] = useState("name-asc");
-    const [ratingsMap, setRatingsMap] = useState({});
-    const [reviewCounts, setReviewCounts] = useState({});
+
     const [hoveredCard, setHoveredCard] = useState(null);
     const [hoveredImageIndex, setHoveredImageIndex] = useState(0);
 
     const intervalRef = useRef(null);
 
     const { restaurants, loading, error } = useGetAllRestaurants();
-    const { getAll: getAllReviews } = useGetAllReviews();
 
-    useEffect(() => {
-        const fetchRatings = async () => {
-            try {
-                const allReviews = await getAllReviews();
-                const map = {};
-                const counts = {};
-
-                allReviews.forEach((rev) => {
-                    if (!map[rev.restaurant]) {
-                        map[rev.restaurant] = [];
-                    }
-                    map[rev.restaurant].push(rev.rating);
-                });
-
-                const ratings = {};
-                for (const id in map) {
-                    const total = map[id].reduce((a, b) => a + b, 0);
-                    ratings[id] = total / map[id].length;
-                    counts[id] = map[id].length;
-                }
-
-                setRatingsMap(ratings);
-                setReviewCounts(counts);
-            } catch (err) {
-                console.error("Failed to fetch all reviews", err);
-            }
-        };
-
-        fetchRatings();
-    }, [getAllReviews]);
-
+    // Filter and sort restaurants
     const filteredRestaurants = useMemo(() => {
         let result = [...restaurants];
 
@@ -79,18 +45,18 @@ export default function Restaurants() {
                 result.sort((a, b) => b.name.localeCompare(a.name));
                 break;
             case "rating-asc":
-                result.sort((a, b) => (ratingsMap[a._id] || 0) - (ratingsMap[b._id] || 0));
+                result.sort((a, b) => (a.averageRating || 0) - (b.averageRating || 0));
                 break;
             case "rating-desc":
-                result.sort((a, b) => (ratingsMap[b._id] || 0) - (ratingsMap[a._id] || 0));
+                result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
                 break;
             case "reviews-desc":
-                result.sort((a, b) => (reviewCounts[b._id] || 0) - (reviewCounts[a._id] || 0));
+                result.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
                 break;
         }
 
         return result;
-    }, [restaurants, filter, sort, userId, ratingsMap, reviewCounts]);
+    }, [restaurants, filter, sort, userId]);
 
     const visibleRestaurants = filteredRestaurants.slice(0, visibleCount);
 
@@ -121,9 +87,11 @@ export default function Restaurants() {
 
             {/* Filters */}
             <div className="flex flex-wrap justify-center gap-4 mb-6">
-                {[{ label: "All", icon: <FaListUl />, value: "all" },
-                { label: "My Restaurants", icon: <FaUtensils />, value: "mine" },
-                { label: "Others", icon: <FaUsers />, value: "others" }].map(({ label, icon, value }) => (
+                {[
+                    { label: "All", icon: <FaListUl />, value: "all" },
+                    { label: "My Restaurants", icon: <FaUtensils />, value: "mine" },
+                    { label: "Others", icon: <FaUsers />, value: "others" },
+                ].map(({ label, icon, value }) => (
                     <button
                         key={value}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm shadow-sm transition font-medium
@@ -149,10 +117,12 @@ export default function Restaurants() {
                 </select>
             </div>
 
-            {/* Guest Prompt */}
+            {/* Guest prompt */}
             {isGuest && filteredRestaurants.length === 0 && !loading && !error && (
                 <div className="text-center mt-10 bg-white border border-orange-200 p-6 rounded-lg shadow-md max-w-xl mx-auto">
-                    <h3 className="text-xl font-semibold text-[#E9762B] mb-2">Want to leave reviews or add restaurants?</h3>
+                    <h3 className="text-xl font-semibold text-[#E9762B] mb-2">
+                        Want to leave reviews or add restaurants?
+                    </h3>
                     <p className="text-gray-600 mb-4">
                         Sign up to join our community and share your dining experiences!
                     </p>
@@ -165,12 +135,14 @@ export default function Restaurants() {
                 </div>
             )}
 
-            {/* Content */}
+            {/* Restaurant list */}
             <div className="max-w-6xl mx-auto">
                 {loading && <p className="text-center text-gray-500">Loading...</p>}
+
                 {!loading && filteredRestaurants.length === 0 && !isGuest && (
                     <p className="text-center text-gray-500">There are no restaurants yet.</p>
                 )}
+
                 {error && !loading && (
                     <p className="text-center text-red-500">Error loading restaurants.</p>
                 )}
@@ -202,8 +174,8 @@ export default function Restaurants() {
                                             address={restaurant.address || restaurant.location}
                                             images={[displayImage]}
                                             features={restaurant.features}
-                                            rating={ratingsMap[restaurant._id]}
-                                            reviewCount={reviewCounts[restaurant._id] || 0}
+                                            rating={restaurant.averageRating}
+                                            reviewCount={restaurant.reviewCount}
                                         />
                                     </div>
                                 );
@@ -224,6 +196,7 @@ export default function Restaurants() {
                     </>
                 )}
             </div>
+
             <ScrollToTop />
         </section>
     );
