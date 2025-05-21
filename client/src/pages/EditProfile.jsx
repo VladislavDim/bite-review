@@ -168,7 +168,7 @@ export default function EditProfile() {
 
             try {
                 const result = await updateUserProfile(formToSend);
-                console.log(token);
+   
                 const updatedUser = {
                     _id: userId,
                     username: result.user.username || currentUsername,
