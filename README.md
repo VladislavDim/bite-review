@@ -15,26 +15,35 @@
 
 ```bash
 bite-review/
-├── client/         # React frontend application
+├── client/                 # React frontend application
+│   ├── public/             # Static public assets (index.html, favicon, etc.)
 │   └── src/
-│       ├── api/        # API service handlers
-│       ├── assets/     # Static files (images, etc.)
-│       ├── components/ # Reusable UI components
-│       ├── contexts/   # React Context API setup
-│       ├── guards/     # Route guards (e.g., protected routes)
-│       ├── hooks/      # Custom React hooks
-│       ├── pages/      # Application pages
-│       ├── providers/  # Context providers
-│       └── utils/      # Utility functions
-├── server/         # Node.js + Express backend
+│       ├── api/            # API service handlers (axios, fetch, etc.)
+│       ├── assets/         # Images, icons, and static resources
+│       ├── components/     # Reusable UI components (buttons, cards, etc.)
+│       ├── contexts/       # React Context API providers and hooks
+│       ├── guards/         # Route guards (ProtectedRoute, OwnerRoute, etc.)
+│       ├── hooks/          # Custom React hooks
+│       ├── layouts/        # Layout components (MainLayout, AuthLayout, etc.)
+│       ├── pages/          # Page components (Home, Login, Register, etc.)
+│       ├── providers/      # Context providers (AuthProvider, ThemeProvider, etc.)
+│       ├── styles/         # Global and component-specific styles (Tailwind, CSS)
+│       └── utils/          # Utility functions and helpers
+├── server/                 # Node.js + Express backend
+│   ├── scripts/            # Seed and utility scripts (e.g., seedCities.js)
 │   └── src/
-│       ├── config/     # Configuration files
-│       ├── controllers/# Request handlers
-│       ├── middlewares/# Express middlewares
-│       ├── models/     # Mongoose models
-│       ├── routes/     # API routes
-│       ├── services/   # Business logic
-│       └── utils/      # Helper utilities
+│       ├── config/         # Configuration files (db, env, etc.)
+│       ├── controllers/    # Express route controllers
+│       ├── middlewares/    # Express middlewares (auth, error handling, etc.)
+│       ├── models/         # Mongoose models (User, Restaurant, Review, etc.)
+│       ├── routes/         # API route definitions
+│       ├── services/       # Business logic and service layers
+│       ├── utils/          # Helper utilities (validators, token, etc.)
+│       └── app.js          # Express app entry point
+├── .env.example            # Example environment variables
+├── package.json            # Project metadata and scripts (root)
+├── README.md               # Project documentation
+└── ...                     # Other config files (gitignore, etc.)
 ```
 
 ---
