@@ -22,7 +22,7 @@ export const registerUser = async ({ username, email, password }) => {
         password
     });
 
-    const token = generateToken(newUser); 
+    const token = generateToken(newUser);
 
     return {
         _id: newUser._id,
@@ -55,6 +55,7 @@ export const loginUser = async ({ email, password }) => {
         _id: user._id,
         username: user.username,
         email: user.email,
+        avatar: user.avatar,
         token,
     };
 };
