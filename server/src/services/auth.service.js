@@ -85,3 +85,29 @@ export const logoutUser = async (token) => {
         expiresAt: new Date(decoded.exp * 1000),
     });
 };
+
+/**
+ * GET /api/auth/verify-email?code=...
+ * Verifies user's email using a verification code
+ * Marks user as verified if code is valid and not expired
+ */
+export const verifyUserEmail = async (code) => {
+    if (!code) {
+        throw new Error('Verification code is required');
+    }
+
+    const user = await User.findOne({
+        'emailVerification.code': code,
+        'emailVerification.expires': { $gt: new Date() },
+    });
+
+    if (!user) {
+        throw new Error('Invalid or expired verification code');
+    }
+
+    user.isEmailVerified = true;
+    user.emailVerification = undefined;
+    await user.save();
+
+    return { message: 'Email verified successfully' };
+};

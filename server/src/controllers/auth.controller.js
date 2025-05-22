@@ -1,7 +1,8 @@
 import {
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    verifyUserEmail
 } from '../services/auth.service.js';
 
 /**
@@ -48,5 +49,18 @@ export const logout = async (req, res) => {
     } catch (error) {
         console.error('Logout error:', error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+/**
+ * GET /api/auth/verify-email?code=...
+ * Verifies user's email using the provided code
+ */
+export const verifyEmail = async (req, res) => {
+    try {
+        const result = await verifyUserEmail(req.query.code);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
     }
 };
