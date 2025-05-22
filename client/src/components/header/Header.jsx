@@ -37,7 +37,7 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-gradient-to-r from-[#E9762B] to-[#f79d4d] py-6 text-white relative z-10">
+        <header className="bg-gradient-to-r from-[#E9762B] to-[#f79d4d] py-6 text-white relative z-40">
             <div className="container mx-auto px-4 flex flex-row items-center justify-between">
                 {/* Logo + Title */}
                 <Link
@@ -106,7 +106,7 @@ export default function Header() {
                                 {menuOpen && (
                                     <ul
                                         ref={menuRef}
-                                        className="absolute right-0 mt-3 w-56 bg-white bg-opacity-90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden z-50 animate-fade-in"
+                                        className="absolute right-0 mt-3 w-56 bg-white bg-opacity-90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden z-[50]"
                                     >
                                         <DropdownItem
                                             text="Explore"
