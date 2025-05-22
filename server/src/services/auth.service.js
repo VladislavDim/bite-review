@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 import User from '../models/user.model.js';
 import BlacklistedToken from '../models/blacklistedToken.model.js';
@@ -16,10 +17,18 @@ export const registerUser = async ({ username, email, password }) => {
         throw new Error('A user with this email already exists!');
     }
 
+    const verificationCode = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
     const newUser = await User.create({
         username,
         email,
-        password
+        password,
+        emailVerification: {
+            code: verificationCode,
+            expires: verificationExpires
+        },
+        isEmailVerified: false
     });
 
     const token = generateToken(newUser);
