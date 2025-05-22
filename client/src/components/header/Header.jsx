@@ -1,8 +1,12 @@
-import './Header.css';
 import logo from '../../assets/images/LogoSite.png';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useUserContext } from '../../contexts/UserContext';
-import { FaUser, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
+import {
+    FaUserPlus, FaSignInAlt
+} from 'react-icons/fa';
+import { useEffect, useRef, useState } from 'react';
+
+const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
 export default function Header() {
     const location = useLocation();
@@ -13,10 +17,8 @@ export default function Header() {
     const menuRef = useRef(null);
     const avatarWrapperRef = useRef(null);
 
-    const isLoggedIn = !!email; // или !!accessToken ако използваш такъв
     const isActive = (path) => location.pathname === path;
 
-    
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (menuRef.current && !menuRef.current.contains(e.target) &&
@@ -35,35 +37,51 @@ export default function Header() {
     };
 
     return (
-        <header className="header-gradient py-6 text-white shadow-md">
-            <div className="container mx-auto px-4 flex flex-col md:flex-row md:items-center justify-between">
+        <header className="bg-gradient-to-r from-[#E9762B] to-[#f79d4d] py-6 text-white relative z-10">
+            <div className="container mx-auto px-4 flex flex-row items-center justify-between">
                 {/* Logo + Title */}
-                <Link to="/" className="logo-brand-wrapper">
-                    <img src={logo} alt="BiteReview Logo" className="w-10 h-10" />
-                    <h1 className="text-2xl md:text-3xl font-bold text-white">BiteReview</h1>
+                <Link
+                    to="/"
+                    className="flex items-center gap-2 group transition-all"
+                >
+                    <img
+                        src={logo}
+                        alt="Logo"
+                        className="w-8 h-8 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]"
+                    />
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white group-hover:drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
+                        BiteReview
+                    </h1>
                 </Link>
 
-                {/* Navigation */}
+                {/* Nav / Profile */}
                 <nav>
-                    <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-lg font-semibold text-white">
+                    <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-lg font-semibold items-center">
                         {!isLoggedIn ? (
                             <>
                                 <li>
                                     <Link
                                         to="/login"
-                                        className={`nav-link flex items-center gap-2 ${isActive('/login') ? 'active' : ''}`}
+                                        className={`relative pb-1 transition-all hover:scale-105 after:block after:h-[2px] after:bg-white after:transition-all after:w-0 hover:after:w-full after:mx-auto ${isActive('/login') ? 'scale-105 font-bold after:w-full' : ''
+                                            }`}
                                     >
-                                        <FaSignInAlt />
-                                        <span>Login</span>
+                                        <div className="flex items-center gap-2 text-white text-sm sm:text-base">
+                                            <FaSignInAlt />
+                                            <span>Login</span>
+                                        </div>
                                     </Link>
                                 </li>
-                                <li>
+                                {/* Hide Sign Up on screens smaller than 640px */}
+                                <li className="hidden sm:block">
                                     <Link
                                         to="/register"
-                                        className={`nav-link flex items-center gap-2 ${isActive('/register') ? 'active' : ''}`}
+                                        className={`relative pb-1 transition-all hover:scale-105 after:block after:h-[2px] after:bg-white after:transition-all after:w-0 hover:after:w-full after:mx-auto ${isActive('/register') ? 'scale-105 font-bold after:w-full' : ''
+                                            }`}
                                     >
-                                        <FaUserPlus />
-                                        <span>Sign Up</span>
+                                        <div className="flex items-center gap-2 text-white text-base">
+                                            <FaUserPlus />
+                                            <span>Sign Up</span>
+                                        </div>
                                     </Link>
                                 </li>
                             </>
