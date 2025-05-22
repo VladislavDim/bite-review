@@ -68,10 +68,10 @@ export default function Header() {
                                 </li>
                             </>
                         ) : (
-                            <li>
-                                <Link
-                                    to="/profile"
-                                    className={`nav-link flex items-center gap-2 hover:no-underline ${isActive('/profile') ? 'active' : ''}`}
+                            <li className="relative" ref={avatarWrapperRef}>
+                                <button
+                                    onClick={() => setMenuOpen(prev => !prev)}
+                                    className="flex items-center gap-2 focus:outline-none group"
                                 >
                                     <span className="text-sm sm:text-base text-white transition group-hover:drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
                                         {username}
