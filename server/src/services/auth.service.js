@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import User from '../models/user.model.js';
 import BlacklistedToken from '../models/blacklistedToken.model.js';
 import { generateToken } from '../utils/jwt.js';
+import { sendVerificationEmail } from './email.service.js';
 
 /**
  * POST /api/auth/register
@@ -30,6 +31,8 @@ export const registerUser = async ({ username, email, password }) => {
         },
         isEmailVerified: false
     });
+
+    await sendVerificationEmail(newUser.email, verificationCode);
 
     const token = generateToken(newUser);
 
