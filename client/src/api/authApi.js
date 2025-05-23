@@ -60,3 +60,11 @@ export const useLogout = () => {
         isLoggedOut,
     };
 };
+
+export const verifyEmail = (code) => {
+    return request.get(`${baseUrl}/verify-email?code=${code}`);
+};
+
+export const resendVerificationCode = async (email) => {
+    return request.post(`${baseUrl}/resend-verification`, { email });
+};
