@@ -36,11 +36,15 @@ export const registerUser = async ({ username, email, password }) => {
 
     const token = generateToken(newUser);
 
+    // return {
+    //     _id: newUser._id,
+    //     username: newUser.username,
+    //    email: newUser.email,
+    //    token
+    //};
+
     return {
-        _id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        token
+        message: 'Registration successful. Please check your email to verify your account.'
     };
 };
 
