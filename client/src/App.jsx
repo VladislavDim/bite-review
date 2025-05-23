@@ -27,6 +27,7 @@ import LogoutRegistrar from './init/logoutRegister'
 
 import './App.css'
 import EditProfile from './pages/EditProfile'
+import VerifyEmail from './pages/VerifyEmail'
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
             <Route element={<GuestGuard />}>
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
             </Route>
 
             <Route path="/restaurants" element={<Restaurants />} />
@@ -55,7 +57,7 @@ function App() {
               <Route path="/logout" element={<Logout />} />
               <Route path="/add-restaurant" element={<AddRestaurant />} />
               <Route path="/my-restaurants" element={<MyRestaurants />} />
-              <Route path="/restaurants/:id/edit" element={<EditRestaurant />} />      
+              <Route path="/restaurants/:id/edit" element={<EditRestaurant />} />
             </Route>
 
             <Route path="/about" element={<About />} />
