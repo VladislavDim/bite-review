@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router';
 import { Link } from 'react-router';
 import { verifyEmail, resendVerificationCode } from '../api/authApi';
 import RegisterImage from "../assets/images/Register.png";
+import { VITE_VERIFICATION_EXPIRY_MINUTES } from '../utils/verification.constants';
 
 export default function VerifyEmail() {
     const [status, setStatus] = useState('idle');
@@ -61,7 +62,7 @@ export default function VerifyEmail() {
             setStatus('loading');
             const result = await resendVerificationCode(email);
             setMessage(result.message || 'Verification code resent!');
-            setCooldown(result.retryAfter || 1800);
+            setCooldown(result.retryAfter || VITE_VERIFICATION_EXPIRY_MINUTES * 60);
             setStatus('idle');
         } catch (err) {
             setStatus('error');
