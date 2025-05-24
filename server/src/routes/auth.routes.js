@@ -16,5 +16,7 @@ router.post('/login', login);
 router.post('/logout', logout);
 // Verify email
 router.get('/verify-email', verifyEmail)
+// Resend verification email
+router.post('/resend-verification', resendVerificationCode);
 
 export default router;
