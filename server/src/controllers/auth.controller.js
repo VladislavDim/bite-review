@@ -64,3 +64,18 @@ export const verifyEmail = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 };
+
+/**
+ * POST /api/auth/resend-verification
+ */
+export const resendVerificationCodeHandler = async (req, res) => {
+  try {
+    const result = await resendVerificationCode(req.body.email);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(err.retryAfter ? 429 : 400).json({
+      message: err.message,
+      ...(err.retryAfter && { retryAfter: err.retryAfter })
+    });
+  }
+};
