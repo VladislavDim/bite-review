@@ -122,3 +122,51 @@ export const verifyUserEmail = async (code) => {
 
     return { message: 'Email verified successfully' };
 };
+
+/**
+ * POST /api/auth/resend-verification
+ * Resends a new verification code if previous one is expired
+ */
+export const resendVerificationCode = async (email) => {
+    if (!email) {
+        throw new Error('Email is required');
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    if (user.isEmailVerified) {
+        throw new Error('Email is already verified');
+    }
+
+    const now = new Date();
+    const existingCode = user.emailVerification;
+
+    if (existingCode?.expires && existingCode.expires > now) {
+        const retryAfter = Math.ceil((existingCode.expires - now) / 1000); // in seconds
+        const minutes = Math.ceil(retryAfter / 60);
+        const msg = `A verification code has already been sent. Please wait ${minutes} minute${minutes > 1 ? 's' : ''}.`;
+        const err = new Error(msg);
+        err.retryAfter = retryAfter;
+        throw err;
+    }
+
+    const newCode = crypto.randomBytes(32).toString('hex');
+    const newExpiry = new Date(now.getTime() + 30 * 60 * 1000); // 30 minutes
+
+    user.emailVerification = {
+        code: newCode,
+        expires: newExpiry
+    };
+
+    await user.save();
+    await sendVerificationEmail(user.email, newCode);
+
+    return {
+        message: 'Verification code resent successfully.',
+        retryAfter: 1800
+    };
+};
