@@ -77,7 +77,7 @@ bite-review/
   - Multer (for handling image uploads)
   - UUID (for unique identifiers)
   - CORS (Cross-Origin Resource Sharing)
-
+  - Resend (for transactional email verification)
 ---
 
 ## 🚀 Getting Started
