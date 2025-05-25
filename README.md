@@ -58,8 +58,8 @@ bite-review/
 ### 👤 Registered Users
 - Explore and filter restaurant listings.
 - Leave detailed reviews and 1-5 star ratings.
-- Like, reply, and interact with other reviews (recursive nesting).
 - Manage personal profiles, including edit capabilities.
+- Receive verification email upon registration.
 
 ### 🌐 Guests
 - Browse restaurants and view public reviews.
@@ -78,7 +78,20 @@ bite-review/
   - UUID (for unique identifiers)
   - CORS (Cross-Origin Resource Sharing)
   - Resend (for transactional email verification)
+    
 ---
+
+## 🔍 Additional Functionalities
+
+- ✅ **Image validation** – server/client validation for size, type, and resolution (with Multer and custom logic).
+- ✅ **Profile management** – secure editing of user data and avatar via FormData and PATCH request.
+- ✅ **Email verification** – new users are required to verify their email via Resend.
+- ✅ **Real restaurant data** – no mock data; actual restaurants and images are used for realism.
+- ✅ **Advanced UI/UX** – includes animated carousels, custom 0.1-precision star rating, gradient scrollbars, responsive dropdowns, and hover transitions.
+- ✅ **Filtering & sorting** – dynamic sorting by rating, name, review count, and ownership.
+- ✅ **Review integrity** – prevents duplicate reviews and disallows self-reviews.
+
+--- 
 
 ## 🚀 Getting Started
 
@@ -120,13 +133,13 @@ CLIENT_URL=http://localhost:5173
 
 ## 💡 Future Enhancements
 
-- ✅ Advanced search and filtering with multi-criteria
-- ✅ Admin dashboard for restaurant owners
-- ✅ Real-time notifications for new reviews
-- ✅ Multi-image upload and gallery view
-- ✅ Reviewer trust-level/ranking system
-- ✅ Enhanced mobile-first UX
-- ✅ Deployment on Vercel / Render / Railway
+- 🔄 Recursive replies and like/dislike interaction on reviews
+- 📊 Admin dashboard with analytics for restaurant owners
+- 🔔 Real-time notifications for user actions (e.g., new reviews)
+- 🖼️ Multi-image upload per restaurant with gallery support
+- 🏅 Reviewer ranking and trust-level system
+- 📱 Fully optimized mobile-first experience
+- ☁️ Deployment on Vercel / Render / Railway
 
 ---
 
@@ -143,7 +156,7 @@ This project is licensed under the **MIT License**.
 For feedback, suggestions, or collaboration:
 
 - GitHub: [VladislavDim](https://github.com/VladislavDim)
-- Email: vladislavdimitrov506@gmail.com
+- Email: gumumpo6@gmail.com
 
 ---
 
