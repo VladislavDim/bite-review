@@ -42,7 +42,7 @@ export default function Login() {
             navigate("/restaurants");
         } catch (err) {
             console.error("Login failed:", err);
-            setServerError("Invalid email or password.");
+            setServerError(err.message || "Login failed");
         } finally {
             setIsPending(false);
         }
