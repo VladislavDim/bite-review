@@ -1,5 +1,8 @@
 import Restaurant from '../models/restaurant.model.js';
 import Review from '../models/review.model.js';
+import { deleteImage } from '../utils/deleteImage.js';
+import paths from '../utils/paths.js';
+import path from 'path';
 
 /**
  * GET /api/restaurants
@@ -88,6 +91,16 @@ export const deleteRestaurant = async (restaurantId, userId) => {
     if (restaurant.owner.toString() !== userId.toString()) {
         throw new Error('Not authorized to delete this restaurant');
     }
+
+    const imagePaths = restaurant.images || [];
+
+    await Promise.all(
+        imagePaths.map(imagePath => {
+            const filename = imagePath.split('/').pop(); // получаваме само името
+            const fullPath = path.join(paths.restaurantUploads, filename); // пълният път
+            return deleteImage(fullPath);
+        })
+    );
 
     await restaurant.deleteOne();
     return restaurant;
