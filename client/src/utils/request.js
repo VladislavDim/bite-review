@@ -26,13 +26,16 @@ const request = async (method, url, data, options = {}) => {
     : null;
 
   if (response.status === 401 && !url.endsWith("/login")) {
-    triggerLogout(); 
+    triggerLogout();
     return;
   }
 
   if (!response.ok) {
     const message = result?.message || `Request failed with status ${response.status}`;
-    throw new Error(message);
+    const error = new Error(message);
+    error.response = { data: result };
+
+    throw error;
   }
 
   return result;
