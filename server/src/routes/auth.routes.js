@@ -3,7 +3,8 @@ import {
     register,
     login,
     logout,
-    verifyEmail
+    verifyEmail,
+    resendVerificationCodeHandler
 } from '../controllers/auth.controller.js';
 
 const router = express.Router();
@@ -17,6 +18,6 @@ router.post('/logout', logout);
 // Verify email
 router.get('/verify-email', verifyEmail)
 // Resend verification email
-router.post('/resend-verification', resendVerificationCode);
+router.post('/resend-verification', resendVerificationCodeHandler);
 
 export default router;
