@@ -2,7 +2,8 @@ import {
     registerUser,
     loginUser,
     logoutUser,
-    verifyUserEmail
+    verifyUserEmail,
+    resendVerificationCode
 } from '../services/auth.service.js';
 
 /**
