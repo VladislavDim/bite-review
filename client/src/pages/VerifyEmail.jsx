@@ -1,37 +1,61 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { Link } from 'react-router';
 import { verifyEmail, resendVerificationCode } from '../api/authApi';
 import RegisterImage from "../assets/images/Register.png";
 import { VITE_VERIFICATION_EXPIRY_MINUTES } from '../utils/verification.constants';
+import { FaClock } from 'react-icons/fa';
 
 export default function VerifyEmail() {
     const [status, setStatus] = useState('idle');
     const [message, setMessage] = useState('');
     const [codeInput, setCodeInput] = useState('');
     const [cooldown, setCooldown] = useState(0);
+    const [buttonLabel, setButtonLabel] = useState('Resend Verification Code');
+    const intervalRef = useRef(null);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         const code = searchParams.get('code');
-        if (code) {
-            setCodeInput(code);
-        }
+        if (code) setCodeInput(code);
     }, [searchParams]);
 
     useEffect(() => {
-        let timer;
         if (cooldown > 0) {
-            timer = setInterval(() => {
+            setButtonLabel(`Resend in ${formatTime(cooldown)}`);
+        } else {
+            setButtonLabel('Resend Verification Code');
+        }
+    }, [cooldown]);
+
+    useEffect(() => {
+        if (cooldown > 0 && !intervalRef.current) {
+            intervalRef.current = setInterval(() => {
                 setCooldown(prev => {
-                    if (prev <= 1) clearInterval(timer);
+                    if (prev <= 1) {
+                        clearInterval(intervalRef.current);
+                        intervalRef.current = null;
+                        return 0;
+                    }
                     return prev - 1;
                 });
             }, 1000);
         }
-        return () => clearInterval(timer);
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+        };
     }, [cooldown]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
 
     const handleVerify = async () => {
         if (!codeInput.trim()) {
@@ -39,6 +63,7 @@ export default function VerifyEmail() {
             setStatus('error');
             return;
         }
+
         try {
             setStatus('loading');
             const result = await verifyEmail(codeInput);
@@ -46,7 +71,7 @@ export default function VerifyEmail() {
             setStatus('success');
             setTimeout(() => navigate('/login'), 4000);
         } catch (err) {
-            setMessage(err.message);
+            setMessage(err.message || 'Verification failed.');
             setStatus('error');
         }
     };
@@ -58,28 +83,33 @@ export default function VerifyEmail() {
             setStatus('error');
             return;
         }
+
         try {
             setStatus('loading');
             const result = await resendVerificationCode(email);
+            const retry = result.retryAfter || VITE_VERIFICATION_EXPIRY_MINUTES * 60;
+            setCooldown(retry);
             setMessage(result.message || 'Verification code resent!');
-            setCooldown(result.retryAfter || VITE_VERIFICATION_EXPIRY_MINUTES * 60);
             setStatus('idle');
         } catch (err) {
-            setStatus('error');
-            const retryAfter = err?.response?.data?.retryAfter;
-            if (retryAfter) {
-                setCooldown(retryAfter);
-                setMessage(`Please wait ${Math.ceil(retryAfter / 60)} minutes before resending.`);
-            } else {
-                setMessage(err.message);
+            const retry = err?.response?.data?.retryAfter;
+            const errorMsg = err?.response?.data?.message || err.message;
+
+            if (retry) {
+                setCooldown(retry);
             }
+
+            setMessage(errorMsg);
+            setStatus('error');
         }
     };
 
     return (
         <section className="flex items-center justify-center min-h-screen bg-[#f8f8f8] px-4">
-            <div className="flex items-stretch shadow-xl rounded-xl overflow-hidden" style={{ boxShadow: '0 12px 30px rgba(233, 118, 43, 0.35)' }}>
-                {/* Image Side */}
+            <div
+                className="flex items-stretch shadow-xl rounded-xl overflow-hidden"
+                style={{ boxShadow: '0 12px 30px rgba(233, 118, 43, 0.35)' }}
+            >
                 <div className="hidden md:block w-[480px] min-h-[580px]">
                     <img
                         src={RegisterImage}
@@ -89,9 +119,10 @@ export default function VerifyEmail() {
                     />
                 </div>
 
-                {/* Form Side */}
                 <div className="w-[360px] bg-white p-10 flex flex-col justify-center">
-                    <h2 className="text-2xl font-bold text-center text-[#E9762B] mb-6">Verify your BiteReview account</h2>
+                    <h2 className="text-2xl font-bold text-center text-[#E9762B] mb-6">
+                        Verify your BiteReview account
+                    </h2>
 
                     <div className="space-y-4">
                         <label htmlFor="code" className="block text-sm font-medium text-gray-700">
@@ -107,11 +138,14 @@ export default function VerifyEmail() {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                         />
 
-                        {status === 'error' && (
-                            <p className="text-sm text-red-600 font-medium text-center">{message}</p>
-                        )}
-                        {status === 'success' && (
-                            <p className="text-sm text-green-600 font-medium text-center">{message}</p>
+                        {message && (
+                            <p
+                                className={`text-sm font-medium text-center ${
+                                    status === 'error' ? 'text-red-600' : 'text-green-600'
+                                }`}
+                            >
+                                {message}
+                            </p>
                         )}
 
                         <button
@@ -124,15 +158,23 @@ export default function VerifyEmail() {
 
                         <button
                             onClick={handleResend}
-                            className="w-full mt-2 bg-gray-100 text-orange-500 font-semibold py-2 rounded-lg border border-orange-500 hover:bg-orange-50 transition disabled:opacity-50"
+                            className={`w-full mt-2 font-semibold py-2 rounded-lg border transition flex items-center justify-center gap-2 ${
+                                cooldown > 0
+                                    ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed'
+                                    : 'bg-gray-100 text-orange-500 border-orange-500 hover:bg-orange-50'
+                            }`}
                             disabled={cooldown > 0 || status === 'loading'}
                         >
-                            {cooldown > 0 ? `Resend available in ${cooldown}s` : 'Resend Verification Code'}
+                            {cooldown > 0 && <FaClock />}
+                            {buttonLabel}
                         </button>
 
                         <p className="text-sm text-center text-gray-600 mt-6">
                             Already verified?{' '}
-                            <Link to="/login" className="text-orange-500 hover:underline font-medium">
+                            <Link
+                                to="/login"
+                                className="text-orange-500 hover:underline font-medium"
+                            >
                                 Login here
                             </Link>
                         </p>
