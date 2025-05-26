@@ -5,7 +5,7 @@ dotenv.config();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendVerificationEmail = async (to, code) => {
-    const url = `${process.env.FRONTEND_URL}/verify-email?code=${code}`;
+    const url = `${process.env.FRONTEND_URL}/verify-email?code=${code}&email=${encodeURIComponent(to)}`;
 
     await resend.emails.send({
         from: 'BiteReview <onboarding@resend.dev>',
