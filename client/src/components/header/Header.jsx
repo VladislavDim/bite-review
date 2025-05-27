@@ -1,4 +1,5 @@
 import logo from '../../assets/images/LogoSite.png';
+import defaultAvatar from '../../assets/images/defaultAvatar.png';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useUserContext } from '../../contexts/UserContext';
 import {
@@ -6,7 +7,6 @@ import {
 } from 'react-icons/fa';
 import { useEffect, useRef, useState } from 'react';
 
-const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
 export default function Header() {
     const location = useLocation();
@@ -95,7 +95,7 @@ export default function Header() {
                                         {username}
                                     </span>
                                     <img
-                                        src={`${baseUrl}${avatar}` || '/default-avatar.png'}
+                                        src={avatar || defaultAvatar}
                                         alt="avatar"
                                         className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white object-cover transition-transform duration-200 group-hover:scale-110 group-hover:drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]"
                                     />
