@@ -1,9 +1,12 @@
 # 🍽️ BiteReview – Full Stack Restaurant Review Platform
 
 ![React](https://img.shields.io/badge/Frontend-React-blue)
+![TailwindCSS](https://img.shields.io/badge/Styling-TailwindCSS-38bdf8?logo=tailwindcss&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
 ![Express](https://img.shields.io/badge/API-Express-lightgrey)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen)
+![Cloudinary](https://img.shields.io/badge/Image%20Hosting-Cloudinary-blueviolet)
+![Resend](https://img.shields.io/badge/Email%20Verification-Resend-ff69b4)
 
 ---
 
@@ -78,6 +81,7 @@ bite-review/
   - UUID (for unique identifiers)
   - CORS (Cross-Origin Resource Sharing)
   - Resend (for transactional email verification)
+  - Cloudinary (for scalable and persistent image hosting)
     
 ---
 
@@ -120,11 +124,27 @@ npm run dev
 ### Environment Variables
 Create a `.env` file inside the `server/` directory:
 ```bash
+
+# Database
 MONGO_URI=your_mongo_connection_string
+
+# Authentication
 JWT_SECRET=your_secret_key
 JWT_EXPIRES_IN=2d
+
+# Application Settings
 PORT=5000
 CLIENT_URL=http://localhost:5173
+
+# Email verification (via Resend)
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=your_verified_sender@resend.dev
+
+# Cloudinary credentials
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
 ```
 
 > Ensure MongoDB and the backend server are running before starting the frontend.
