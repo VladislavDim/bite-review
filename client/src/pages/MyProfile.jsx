@@ -79,7 +79,7 @@ export default function MyProfile() {
                 {/* Avatar */}
                 {profile.avatar ? (
                     <img
-                        src={`${baseUrl}${profile.avatar}`}
+                        src={profile.avatar}
                         alt="User Avatar"
                         className="w-28 h-28 object-cover rounded-full shadow"
                     />
