@@ -3,17 +3,15 @@ import { Link } from "react-router";
 import { useGetAllRestaurants } from "../../api/restaurantApi";
 import { useGetAllReviews } from "../../api/reviewApi";
 import { UserContext } from "../../contexts/UserContext";
+import noImage from "../../assets/images/no-image-available.png";
 
 import "./Hero.css";
-
-const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
 export default function Hero() {
     const { restaurants } = useGetAllRestaurants();
     const { _id: userId } = useContext(UserContext);
     const { getAll: getAllReviews } = useGetAllReviews();
 
-    const [ratingsMap, setRatingsMap] = useState({});
     const [hoveredId, setHoveredId] = useState(null);
     const [isPaused, setIsPaused] = useState(false);
 
@@ -28,13 +26,6 @@ export default function Hero() {
                     map[r.restaurant].push(r.rating);
                 });
 
-                const calculatedRatings = {};
-                for (const id in map) {
-                    const total = map[id].reduce((a, b) => a + b, 0);
-                    calculatedRatings[id] = total / map[id].length;
-                }
-
-                setRatingsMap(calculatedRatings);
             } catch (err) {
                 console.error("Failed to load ratings:", err);
             }
@@ -47,8 +38,8 @@ export default function Hero() {
 
     const renderCard = (r, index) => {
         const imageUrl = r.images?.[0]
-            ? `${baseUrl}${r.images[0]}`
-            : `${baseUrl}/public/no-image-available.png`;
+            ? r.images[0]
+            : noImage;
         const isDefaultImage = imageUrl.includes("no-image-available");
 
         const locationDisplay =
