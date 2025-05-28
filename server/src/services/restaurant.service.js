@@ -1,8 +1,7 @@
 import Restaurant from '../models/restaurant.model.js';
 import Review from '../models/review.model.js';
-import { deleteImage } from '../utils/deleteImage.js';
-import paths from '../utils/paths.js';
-import path from 'path';
+import { deleteFromCloudinaryByUrl } from '../utils/cloudinary.js';
+
 
 /**
  * GET /api/restaurants
@@ -92,14 +91,10 @@ export const deleteRestaurant = async (restaurantId, userId) => {
         throw new Error('Not authorized to delete this restaurant');
     }
 
-    const imagePaths = restaurant.images || [];
+    const imageUrls = restaurant.images || [];
 
     await Promise.all(
-        imagePaths.map(imagePath => {
-            const filename = imagePath.split('/').pop(); // получаваме само името
-            const fullPath = path.join(paths.restaurantUploads, filename); // пълният път
-            return deleteImage(fullPath);
-        })
+        imageUrls.map(deleteFromCloudinaryByUrl)
     );
 
     await restaurant.deleteOne();
