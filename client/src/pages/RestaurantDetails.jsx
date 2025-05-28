@@ -6,8 +6,7 @@ import StarRatingDisplay from "../components/ui/StarRatingDisplay";
 import { useGetRestaurantById } from "../api/restaurantApi";
 import { useGetReviewsByRestaurantId, useCreateReview } from "../api/reviewApi";
 import { UserContext } from "../contexts/UserContext";
-
-const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
+import noImage from "../assets/images/no-image-available.png";
 
 export default function RestaurantDetails() {
     const { id } = useParams();
@@ -59,7 +58,7 @@ export default function RestaurantDetails() {
         if (restaurant?.images?.length > 0 && !imagesPreloaded) {
             restaurant.images.forEach((src) => {
                 const img = new Image();
-                img.src = `${baseUrl}${src}`;
+                img.src = `${src}`;
             });
             setImagesPreloaded(true);
         }
@@ -146,8 +145,8 @@ export default function RestaurantDetails() {
 
     const hasImages = restaurant?.images?.length > 0;
     const imageSrc = hasImages
-        ? `${baseUrl}${restaurant.images[imageIndex]}`
-        : `${baseUrl}/public/no-image-available.png`;
+        ? restaurant.images[imageIndex]
+        : noImage;
 
     const imageClass = hasImages
         ? "object-cover"
@@ -165,14 +164,14 @@ export default function RestaurantDetails() {
                     <div onClick={(e) => e.stopPropagation()}>
                         {hasImages ? (
                             <img
-                                src={`${baseUrl}${restaurant.images[lightboxIndex]}`}
+                                src={`${restaurant.images[lightboxIndex]}`}
                                 alt="Full"
                                 className="max-w-4xl max-h-[90vh] rounded-lg shadow-lg"
                             />
                         ) : (
                             <div className="flex flex-col items-center justify-center text-white p-10">
                                 <img
-                                    src={`${baseUrl}/public/no-image-available.png`}
+                                    src={noImage}
                                     alt="No available"
                                     className="max-w-md max-h-[60vh] rounded-lg mb-4"
                                 />
