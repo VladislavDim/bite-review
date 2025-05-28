@@ -1,6 +1,5 @@
 import * as restaurantService from '../services/restaurant.service.js';
-import paths from '../utils/paths.js';
-import { deleteImage } from '../utils/deleteImage.js';
+import { deleteFromCloudinaryByUrl, uploadToCloudinary } from '../utils/cloudinary.js';
 
 /**
  * GET /api/restaurants
@@ -39,31 +38,20 @@ export const getById = async (req, res) => {
  */
 export const updateImages = async (req, res) => {
     const { id } = req.params;
-    const newImagePaths = req.body; // array of image paths (e.g. /uploads/restaurants/abc.jpg)
+    const newImageUrls = req.body; // array of Cloudinary URLs
 
     try {
         const restaurant = await restaurantService.getRestaurantById(id);
-
         if (!restaurant) {
             return res.status(404).json({ message: 'Restaurant not found.' });
         }
 
-        const oldImagePaths = restaurant.images || [];
+        const oldUrls = restaurant.images || [];
+        const removed = oldUrls.filter(url => !newImageUrls.includes(url));
 
-        const removedPaths = oldImagePaths.filter(
-            (path) => !newImagePaths.includes(path)
-        );
+        await Promise.all(removed.map(deleteFromCloudinaryByUrl));
 
-        await Promise.all(
-            removedPaths.map((imgPath) => {
-                const filename = imgPath.split('/').pop();
-                const fullPath = `${paths.restaurantUploads}/${filename}`;
-                return deleteImage(fullPath);
-            })
-        );
-
-        const updatedRestaurant = await restaurantService.replaceImages(id, newImagePaths);
-
+        const updatedRestaurant = await restaurantService.replaceImages(id, newImageUrls);
         res.status(200).json(updatedRestaurant);
     } catch (error) {
         console.error('Failed to update restaurant images:', error);
@@ -84,32 +72,18 @@ export const uploadImage = async (req, res) => {
 
     try {
         const restaurant = await restaurantService.getRestaurantById(id);
-
         if (!restaurant) {
-            await Promise.all(
-                req.files.map(file =>
-                    deleteImage(`${paths.restaurantUploads}/${file.filename}`)
-                )
-            );
             return res.status(404).json({ message: 'Restaurant not found.' });
         }
 
-        const imagePaths = req.files.map(file => `${paths.restaurantUploadsUrl}/${file.filename}`);
+        const imageUrls = await Promise.all(
+            req.files.map(file => uploadToCloudinary(file.buffer, 'bite-review/restaurants'))
+        );
 
-        const updatedRestaurant = await restaurantService.addImages(id, imagePaths);
-
+        const updatedRestaurant = await restaurantService.addImages(id, imageUrls);
         res.status(200).json(updatedRestaurant);
     } catch (error) {
         console.error('Failed to upload restaurant images:', error);
-
-        if (req.files) {
-            await Promise.all(
-                req.files.map(file =>
-                    deleteImage(`${paths.restaurantUploads}/${file.filename}`)
-                )
-            );
-        }
-
         res.status(500).json({ message: 'Internal server error' });
     }
 };
