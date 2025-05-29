@@ -2,8 +2,7 @@ import { useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { useDeleteRestaurant, useGetAllRestaurants } from "../api/restaurantApi";
-
-const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
+import noImage from "../assets/images/no-image-available.png";
 
 export default function MyRestaurants() {
     const navigate = useNavigate();
@@ -101,8 +100,8 @@ export default function MyRestaurants() {
                             <img
                                 src={
                                     r.images.length > 0
-                                        ? `${baseUrl}${r.images?.[0]}`
-                                        : `${baseUrl}/public/no-image-available.png`
+                                        ? r.images?.[0]
+                                        : noImage
                                 }
                                 alt={r.name}
                                 className="w-full h-40 object-cover rounded-md mb-3"
