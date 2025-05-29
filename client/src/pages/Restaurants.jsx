@@ -8,7 +8,7 @@ import { UserContext } from "../contexts/UserContext";
 import RestaurantCard from "../components/restaurant-card/RestaurantCard";
 import ScrollToTop from "../components/ui/ScrollToTop";
 
-const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
+import noImage from "../assets/images/no-image-available.png";
 
 export default function Restaurants() {
     const ITEMS_PER_LOAD = 10;
@@ -159,8 +159,8 @@ export default function Restaurants() {
                             {visibleRestaurants.map((restaurant, index) => {
                                 const images = restaurant.images || [];
                                 const displayImage = images.length > 0
-                                    ? `${baseUrl}${images[hoveredCard === restaurant._id ? hoveredImageIndex % images.length : 0]}`
-                                    : `${baseUrl}/public/no-image-available.png`;
+                                    ? images[hoveredCard === restaurant._id ? hoveredImageIndex % images.length : 0]
+                                    : noImage;
 
                                 return (
                                     <div
