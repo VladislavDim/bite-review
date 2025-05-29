@@ -47,13 +47,13 @@ export const updateProfile = async (req, res) => {
         if (req.file) {
             if (user.avatar && user.avatar.includes('res.cloudinary.com')) {
                 const publicId = user.avatar.split('/').pop().split('.')[0]; // crude method
-                await cloudinary.uploader.destroy(`avatars/${publicId}`);
+                await cloudinary.uploader.destroy(`bite-review/avatars/${publicId}`);
             }
 
             const uploadResult = await new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
                     {
-                        folder: 'avatars',
+                        folder: 'bite-review/avatars',
                         public_id: `${userId}-avatar`,
                         overwrite: true,
                     },
