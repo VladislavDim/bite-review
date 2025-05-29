@@ -11,6 +11,7 @@ import {
     MIN_AVATAR_IMAGE_WIDTH,
     MIN_AVATAR_IMAGE_HEIGHT,
 } from "../utils/image.validation";
+import defaultAvatar from "../assets/images/default-avatar.png";
 
 const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
 
@@ -54,7 +55,7 @@ export default function EditProfile() {
                     email: user.email || "",
                     avatar: user.avatar || null,
                 });
-                setPreviewAvatar(user.avatar ? `${baseUrl}${user.avatar}` : null);
+                setPreviewAvatar(user.avatar ? user.avatar : defaultAvatar);
             } catch (err) {
                 console.error("Failed to load user:", err);
             } finally {
