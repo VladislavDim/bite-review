@@ -1,5 +1,5 @@
 import logo from '../../assets/images/LogoSite.png';
-import defaultAvatar from '../../assets/images/defaultAvatar.png';
+import defaultAvatar from '../../assets/images/default-avatar.png';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useUserContext } from '../../contexts/UserContext';
 import {
