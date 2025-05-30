@@ -13,8 +13,6 @@ import {
 } from "../utils/image.validation";
 import defaultAvatar from "../assets/images/default-avatar.png";
 
-const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
-
 export default function EditProfile() {
     const navigate = useNavigate();
     const {
