@@ -212,7 +212,7 @@ export default function EditRestaurant() {
                 <div className="flex flex-wrap gap-4 mt-4">
                     {existingImages.map((img, index) => (
                         <div key={index} className="relative w-24 h-24 rounded overflow-hidden border border-orange-400 bg-gradient-to-r from-orange-300 to-orange-200 group">
-                            <img src={`${baseUrl}${img}`} alt="existing" className="w-full h-full object-cover transition-opacity group-hover:opacity-60" />
+                            <img src={img} alt="existing" className="w-full h-full object-cover transition-opacity group-hover:opacity-60" />
                             <button
                                 type="button"
                                 onClick={() => removeExistingImage(index)}
