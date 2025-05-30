@@ -6,6 +6,7 @@ import {
     updateUserProfileFields,
     updateUserPassword
 } from '../services/user.service.js';
+import { deleteFromCloudinaryByUrl } from '../utils/cloudinary.js';
 
 /**
  * GET /api/users
@@ -45,9 +46,8 @@ export const updateProfile = async (req, res) => {
 
         // 1. Handle avatar upload via Cloudinary
         if (req.file) {
-            if (user.avatar && user.avatar.includes('res.cloudinary.com')) {
-                const publicId = user.avatar.split('/').pop().split('.')[0]; // crude method
-                await cloudinary.uploader.destroy(`bite-review/avatars/${publicId}`);
+            if (user.avatar) {
+               await deleteFromCloudinaryByUrl(user.avatar);
             }
 
             const uploadResult = await new Promise((resolve, reject) => {
