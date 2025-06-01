@@ -34,7 +34,7 @@ export const registerUser = async ({ username, email, password }) => {
 
     await sendVerificationEmail(newUser.email, verificationCode);
 
-    const token = generateToken(newUser);
+    //const token = generateToken(newUser);
 
     // return {
     //     _id: newUser._id,
@@ -44,6 +44,8 @@ export const registerUser = async ({ username, email, password }) => {
     //};
 
     return {
+        username: newUser.username,
+        email: newUser.email,
         message: 'Registration successful. Please check your email to verify your account.'
     };
 };
