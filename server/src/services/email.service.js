@@ -8,7 +8,7 @@ export const sendVerificationEmail = async (to, code) => {
     const url = `${process.env.FRONTEND_URL}/verify-email?code=${code}&email=${encodeURIComponent(to)}`;
 
     await resend.emails.send({
-        from: 'BiteReview <noreply@bankov.co.uk>',
+        from: 'BiteReview <noreply@bitereview.info>',
         to,
         subject: 'Verify your email address',
         html: `
