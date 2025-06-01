@@ -13,8 +13,12 @@ export const sendVerificationEmail = async (to, code) => {
         subject: 'Verify your email address',
         html: `
             <h2>Welcome to BiteReview! 🍽️</h2>
-            <p>Click the button below to verify your email address:</p>
-            <a href="${url}" style="padding: 10px 20px; background-color: #f97316; color: white; border-radius: 5px; text-decoration: none;">Verify Email</a>
+            <p>Your verification code is:</p>
+            <h1 style="color: #f97316; font-size: 32px;">${code}</h1>
+
+            <p>You can enter this code in the app, or click the button below to verify instantly:</p>
+            <a href="${url}" style="display:inline-block; margin: 20px 0; padding: 12px 24px; background-color: #f97316; color: white; border-radius: 6px; text-decoration: none;">Verify Email</a>
+
             <p>Or copy this link into your browser:</p>
             <p>${url}</p>
         `,
