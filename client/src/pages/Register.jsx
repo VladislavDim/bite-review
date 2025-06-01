@@ -47,7 +47,7 @@ export default function Register() {
             setIsPending(true);
             const authData = await register(formState.username, formState.email, formState.password);
             userLoginHandler(authData);
-            navigate("/restaurants");
+            navigate("/verify-email");
         } catch (err) {
             console.error("Register failed:", err);
             setServerError(err.message || "Registration failed. Try again.");
