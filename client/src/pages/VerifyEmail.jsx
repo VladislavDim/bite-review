@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router';
-import { Link } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { verifyEmail, resendVerificationCode } from '../api/authApi';
 import RegisterImage from "../assets/images/Register.png";
 import { VITE_VERIFICATION_EXPIRY_MINUTES } from '../utils/verification.constants';
 import { FaClock } from 'react-icons/fa';
+import { useUserContext } from '../contexts/UserContext';
 
 export default function VerifyEmail() {
     const [status, setStatus] = useState('idle');
@@ -13,13 +13,15 @@ export default function VerifyEmail() {
     const [cooldown, setCooldown] = useState(0);
     const [buttonLabel, setButtonLabel] = useState('Resend Verification Code');
     const intervalRef = useRef(null);
-    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
+    const { email } = useUserContext();
+
     useEffect(() => {
-        const code = searchParams.get('code');
-        if (code) setCodeInput(code);
-    }, [searchParams]);
+        if (!email) {
+            navigate('/register'); // Redirect if user reloads and email is lost
+        }
+    }, [email, navigate]);
 
     useEffect(() => {
         if (cooldown > 0) {
@@ -77,7 +79,6 @@ export default function VerifyEmail() {
     };
 
     const handleResend = async () => {
-        const email = searchParams.get('email');
         if (!email) {
             setMessage('Missing email for resending verification.');
             setStatus('error');
