@@ -299,7 +299,7 @@ export default function RestaurantDetails() {
                             </div>
                             <p className="text-gray-800">{rev.comment}</p>
                             <p className="text-xs text-gray-400 mt-1">
-                                – {rev.user.username || "Anonymous"},{" "}
+                                – {rev.user?.username || "Anonymous"},{" "}
                                 {new Date(rev.createdAt).toLocaleDateString()}
                             </p>
                         </div>
