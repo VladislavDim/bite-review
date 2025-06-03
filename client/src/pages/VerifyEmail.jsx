@@ -71,7 +71,7 @@ export default function VerifyEmail() {
             const result = await verifyEmail(codeInput);
             setMessage(result.message);
             setStatus('success');
-            setTimeout(() => navigate('/login'), 4000);
+            setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
             setMessage(err.message || 'Verification failed.');
             setStatus('error');
