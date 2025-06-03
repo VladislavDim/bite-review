@@ -5,17 +5,19 @@ import PasswordInput from "../components/ui/PasswordInput";
 import TextInput from "../components/ui/TextInput";
 import SubmitButton from "../components/ui/SubmitButton";
 import { useLogin } from "../api/authApi";
-import { UserContext } from "../contexts/UserContext";
+import { UserContext, useUserContext } from "../contexts/UserContext";
 
 export default function Login() {
     const navigate = useNavigate();
     const { userLoginHandler } = useContext(UserContext);
     const { login } = useLogin();
 
-    const [formState, setFormState] = useState({ email: "", password: "" });
+    const { email } = useUserContext();
+    const [formState, setFormState] = useState({ email: email || "", password: "" });
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState("");
     const [isPending, setIsPending] = useState(false);
+
 
     const handleChange = (e) => {
         setFormState((prev) => ({
