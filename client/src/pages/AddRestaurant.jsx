@@ -7,6 +7,7 @@ import { useGetCities } from "../api/cityApi";
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES, MAX_IMAGE_SIZE_MB } from "../utils/image.validation";
 
 export default function AddRestaurant() {
+    const [isPending, setIsPending] = useState(false);
     const [images, setImages] = useState([]);
     const [serverError, setServerError] = useState(null);
 
@@ -51,6 +52,7 @@ export default function AddRestaurant() {
 
     // Submit form data and upload images
     const onSubmit = async (data) => {
+        setIsPending(true);
         setServerError(null);
 
         if (images.length === 0) {
@@ -68,6 +70,8 @@ export default function AddRestaurant() {
         } catch (err) {
             console.error("Failed to create restaurant or upload images", err);
             setServerError(err.message || "Something went wrong. Please try again.");
+        } finally {
+            setIsPending(false);
         }
     };
 
@@ -221,7 +225,9 @@ export default function AddRestaurant() {
                 )}
 
                 {/* Submit Button */}
-                <SubmitButton>Create Restaurant</SubmitButton>
+                <SubmitButton disabled={isPending}>
+                    {isPending ? "Creating Restaurant..." : "Create Restaurant"}
+                </SubmitButton>
             </form>
         </section>
     );
