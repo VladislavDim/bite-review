@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import User from '../models/user.model.js';
 import BlacklistedToken from '../models/blacklistedToken.model.js';
 import { generateToken } from '../utils/jwt.js';
-import { sendVerificationEmail } from './email.service.js';
+import { sendResetEmail, sendVerificationEmail } from './email.service.js';
 
 /**
  * POST /api/auth/register
@@ -171,4 +171,27 @@ export const resendVerificationCode = async (email) => {
         message: 'Verification code resent successfully.',
         retryAfter: 1800
     };
+};
+
+/**
+ * POST /api/auth/forgot-password
+ * Generates reset token and sends password reset email
+ */
+export const requestPasswordReset = async (email) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    user.resetToken = hashedToken;
+    user.resetTokenExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save();
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${rawToken}`;
+    await sendResetEmail(user.email, resetLink);
+
+    return { message: 'Password reset email sent' };
 };

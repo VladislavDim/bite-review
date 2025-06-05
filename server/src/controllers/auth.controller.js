@@ -3,7 +3,8 @@ import {
     loginUser,
     logoutUser,
     verifyUserEmail,
-    resendVerificationCode
+    resendVerificationCode,
+    requestPasswordReset,
 } from '../services/auth.service.js';
 
 /**
@@ -79,4 +80,19 @@ export const resendVerificationCodeHandler = async (req, res) => {
       ...(err.retryAfter && { retryAfter: err.retryAfter })
     });
   }
+};
+
+/**
+ * POST /api/auth/forgot-password
+ * Handles password reset request and sends reset email
+ */
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const result = await requestPasswordReset(email);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
 };
