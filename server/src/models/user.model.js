@@ -33,20 +33,31 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: '',
         },
-        emailVerification: {
-            code: String,
-            expires: Date
-        },
         isEmailVerified: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
+        emailVerification: {
+            code: String,
+            expires: Date,
+        },
+
+        //Fields for password reset
+        resetToken: {
+            type: String,
+            default: null,
+        },
+        resetTokenExpires: {
+            type: Date,
+            default: null,
+        },
     },
     {
         timestamps: true,
     }
 );
 
+//  Hash password before saving
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
@@ -57,6 +68,7 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
+//  Method to compare password
 userSchema.methods.comparePassword = async function (inputPassword) {
     return bcrypt.compare(inputPassword, this.password);
 };
