@@ -24,3 +24,20 @@ export const sendVerificationEmail = async (to, code) => {
         `,
     });
 };
+
+export const sendResetEmail = async (to, resetLink) => {
+    await resend.emails.send({
+        from: 'BiteReview <noreply@bitereview.info>',
+        to,
+        subject: 'Reset your BiteReview password',
+        html: `
+            <h2>Password Reset Request</h2>
+            <p>We received a request to reset your password.</p>
+            <p>You can reset it by clicking the button below:</p>
+            <a href="${resetLink}" style="display:inline-block; margin: 20px 0; padding: 12px 24px; background-color: #f97316; color: white; border-radius: 6px; text-decoration: none;">Reset Password</a>
+
+            <p>This link will expire in 15 minutes. If you didn't request this, you can ignore this email.</p>
+            <p>${resetLink}</p>
+        `,
+    });
+};
