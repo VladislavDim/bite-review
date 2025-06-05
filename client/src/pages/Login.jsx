@@ -88,6 +88,12 @@ export default function Login() {
                             error={errors.password}
                         />
 
+                        <div className="text-right">
+                            <Link to="/forgot-password" className="text-sm text-orange-500 hover:underline font-medium">
+                                Forgot your password?
+                            </Link>
+                        </div>
+
                         {serverError && (
                             <p className="text-red-500 text-sm text-center -mt-2">{serverError}</p>
                         )}
