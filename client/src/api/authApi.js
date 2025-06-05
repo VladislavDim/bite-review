@@ -68,3 +68,11 @@ export const verifyEmail = (code) => {
 export const resendVerificationCode = async (email) => {
     return request.post(`${baseUrl}/resend-verification`, { email });
 };
+
+export const requestPasswordReset = async (email) => {
+    return request.post(`${baseUrl}/forgot-password`, { email });
+};
+
+export const resetPassword = async (token, password) => {
+    return request.post(`${baseUrl}/reset-password/${token}`, { password });
+};
