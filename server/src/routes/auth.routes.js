@@ -4,7 +4,9 @@ import {
     login,
     logout,
     verifyEmail,
-    resendVerificationCodeHandler
+    resendVerificationCodeHandler,
+    forgotPassword,
+    resetPasswordHandler
 } from '../controllers/auth.controller.js';
 
 const router = express.Router();
@@ -19,5 +21,9 @@ router.post('/logout', logout);
 router.get('/verify-email', verifyEmail)
 // Resend verification email
 router.post('/resend-verification', resendVerificationCodeHandler);
+// Request password reset
+router.post('/forgot-password', forgotPassword);
+// Reset password
+router.post('/reset-password/:token', resetPasswordHandler);
 
 export default router;
