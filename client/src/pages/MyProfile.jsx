@@ -6,8 +6,7 @@ import { useGetUserById } from "../api/userApi";
 import { useGetAllReviews } from "../api/reviewApi";
 import { useGetAllRestaurants } from "../api/restaurantApi";
 import StarRatingDisplay from "../components/ui/StarRatingDisplay";
-
-const baseUrl = import.meta.env.VITE_APP_SERVER_URL;
+import defaultAvatar from '../assets/images/default-avatar.png';
 
 export default function MyProfile() {
     const navigate = useNavigate();
@@ -84,9 +83,11 @@ export default function MyProfile() {
                         className="w-28 h-28 object-cover rounded-full shadow"
                     />
                 ) : (
-                    <div className="w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center text-4xl font-bold text-[#E9762B]">
-                        {profile.username?.[0] || "?"}
-                    </div>
+                    <img
+                        src={defaultAvatar}
+                        alt="Default Avatar"
+                        className="w-28 h-28 object-cover rounded-full shadow"
+                    />
                 )}
 
                 {/* Info */}
