@@ -195,3 +195,27 @@ export const requestPasswordReset = async (email) => {
 
     return { message: 'Password reset email sent' };
 };
+
+/**
+ * POST /api/auth/reset-password/:token
+ * Resets user's password using a valid reset token
+ */
+export const resetPassword = async (token, newPassword) => {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne({
+        resetToken: hashedToken,
+        resetTokenExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+        throw new Error('Invalid or expired token');
+    }
+
+    user.password = newPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+
+    return { message: 'Password has been reset successfully' };
+};

@@ -5,6 +5,7 @@ import {
     verifyUserEmail,
     resendVerificationCode,
     requestPasswordReset,
+    resetPassword
 } from '../services/auth.service.js';
 
 /**
@@ -95,4 +96,19 @@ export const forgotPassword = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 };
+
+/**
+ * POST /api/auth/reset-password/:token
+ * Handles password reset after receiving a valid token
+ */
+export const resetPasswordHandler = async (req, res) => {
+    try {
+        const token = req.params.token;
+        const { password } = req.body;
+
+        const result = await resetPassword(token, password);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 };
