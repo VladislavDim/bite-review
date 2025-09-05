@@ -134,7 +134,7 @@ JWT_EXPIRES_IN=2d
 
 # Application Settings
 PORT=5000
-CLIENT_URL=http://localhost:5173
+FRONTEND_URL=http://localhost:5173
 
 # Email verification (via Resend)
 RESEND_API_KEY=your_resend_api_key
