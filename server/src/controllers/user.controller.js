@@ -1,6 +1,7 @@
 import cloudinary from '../config/cloudinary.config.js';
 import streamifier from 'streamifier';
 import {
+    getAllUsers,
     getUserById,
     updateUserAvatar,
     updateUserProfileFields,
